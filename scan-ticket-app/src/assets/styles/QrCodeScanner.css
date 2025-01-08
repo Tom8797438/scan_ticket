@@ -1,0 +1,109 @@
+/* Erreurs */
+.error {
+    font-weight: bold;
+    color: red;
+    text-align: center;
+    margin: 10px 0;
+  }
+  
+  /* Cases à cocher pour les types de codes */
+  .barcode-format-checkbox {
+    margin: 10px;
+    white-space: nowrap;
+    display: inline-block;
+  }
+  
+  /* Conteneur principal */
+  .section-scan {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 4rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #8565db, #8fd3ce);
+    border-radius: 8px;
+  }
+  
+  /* Ajuste la sélection de la caméra */
+  .selection-camera {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    padding: 8px;
+    display: block;
+    width: 100%;
+    border-radius: 8px;
+  }
+  
+  /* Zone pour le résultat */
+  .decode-result {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 4rem;
+    font-size: 1.2rem;
+    margin-top: 1.2rem;
+    font-weight: bold;
+  }
+  
+  /* Composant du scanner */
+  .camera-frame {
+    width: 100%;
+    max-width: 800px;
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
+    padding-bottom: 8px;
+    overflow: hidden;
+    margin: auto;
+  }
+  
+  /* Responsive design */
+  @media (max-width: 768px) {
+    /* Colonne verticale pour les petits écrans */
+    .section-scan {
+      flex-direction: column;
+      align-items: center;;
+    }
+  
+    .selection-camera,
+    .barcode-format-checkbox {
+      font-size: 1.2rem;
+      width: 100%;
+    }
+  
+    qrcode-stream {
+      width: 90%;
+      height: auto;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    /* Très petits écrans */
+    .section-scan {
+      padding: 0.8rem;
+    }
+  
+    .selection-camera {
+      font-size: 1.1rem;
+      margin: 5px;
+      width: 310px;
+    }
+  
+    .barcode-format-checkbox {
+      margin: 6px 0;
+      font-size: 1.2rem;
+    }
+  
+    qrcode-stream {
+      width: 100%;
+      max-width: 300px;
+    }
+  
+    .decode-result {
+      display: contents;
+      position: relative;
+      text-align: center;
+      font-size: 1.2rem;
+      margin-top: 0.2rem;
+      font-weight: bold;
+    }
+  }

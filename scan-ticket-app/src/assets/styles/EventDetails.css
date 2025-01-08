@@ -1,0 +1,179 @@
+.event-title{
+    font-size: 2em;
+    margin-top: 6px;
+  }
+  
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* S'assurer que l'overlay est au-dessus */
+  }
+  
+  .event-card {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr; /* La première colonne est plus large */
+    gap: 2rem; /* Espace entre les colonnes */
+    background: linear-gradient(135deg, #8565db, #8fd3ce);
+    border-radius: 8px;
+    padding: 1.5rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+  }
+  
+  .event-details {
+    padding-right: 1rem;
+  }
+  
+  .event-details p {
+    margin-bottom: 1.5rem;
+    font-size: 1.5em;
+  }
+  
+  .booking-section {
+    background: linear-gradient(135deg, #88d3ce, #6e45e2);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .booking-section h3 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    color: #11379e;
+  }
+  
+  .input-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+  
+  .input-group label {
+    flex: 2;
+    font-size: 1rem;
+  }
+  
+  .input-group input {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+  }
+  
+  .total {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #4caf50;
+    text-align: right;
+    margin-top: 1rem;
+  }
+  
+  button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 1rem;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Responsive Design */
+  
+  /* Pour tablettes (768px ou moins) */
+  @media (max-width: 768px) {
+    .event-card {
+      grid-template-columns: 1fr; /* Une seule colonne */
+      padding: 1rem;
+      max-height: 90vh; 
+      overflow-y: auto
+    }
+  
+    .event-details {
+      padding-right: 0;
+    }
+  
+    .event-details p {
+      font-size: 1.2em; /* Réduction de la taille du texte */
+    }
+  
+    .booking-section {
+      margin-top: 1rem;
+    }
+  
+    .booking-section h3 {
+      font-size: 1rem; /* Réduction de la taille des titres */
+    }
+  
+    .input-group label {
+      font-size: 0.9rem; /* Réduction des étiquettes */
+    }
+  
+    .input-group input {
+      font-size: 0.9rem;
+      padding: 0.4rem;
+    }
+  
+    button {
+      font-size: 0.9rem;
+      padding: 0.6rem;
+    }
+  }
+  
+  /* Pour mobiles (480px ou moins) */
+  @media (max-width: 480px) {
+    .event-card {
+      grid-template-columns: 1fr; /* Une seule colonne */
+      padding: 0.5rem;
+      gap: 1rem;
+      max-height: 90vh; 
+      overflow-y: auto
+    }
+  
+    .event-details p {
+      font-size: 1rem; /* Texte encore plus petit */
+    }
+  
+    .booking-section {
+      margin-top: 1rem;
+      padding: 0.5rem;
+    }
+  
+    .booking-section h3 {
+      font-size: 0.9rem; /* Titres plus petits */
+    }
+  
+    .input-group label {
+      font-size: 0.8rem; /* Étiquettes réduites */
+    }
+  
+    .input-group input {
+      font-size: 0.8rem;
+      padding: 0.3rem;
+    }
+  
+    button {
+      font-size: 0.8rem;
+      padding: 0.5rem;
+    }
+  }
+  

@@ -1,0 +1,81 @@
+{
+  "kind": "collectionType",
+  "collectionName": "events",
+  "info": {
+    "singularName": "event",
+    "pluralName": "events",
+    "displayName": "event",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "postal_code": {
+      "type": "integer"
+    },
+    "city": {
+      "type": "string"
+    },
+    "event_date": {
+      "type": "date"
+    },
+    "total_seats": {
+      "type": "integer"
+    },
+    "price_standard": {
+      "type": "decimal"
+    },
+    "price_vip": {
+      "type": "decimal"
+    },
+    "price_pmr": {
+      "type": "decimal"
+    },
+    "price_children": {
+      "type": "decimal"
+    },
+    "price_student": {
+      "type": "decimal"
+    },
+    "create_at": {
+      "type": "date"
+    },
+    "seats": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::seat.seat",
+      "mappedBy": "event"
+    },
+    "scan": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::scan.scan",
+      "inversedBy": "users"
+    },
+    "event": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::event.event"
+    },
+    "tickets": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ticket.ticket",
+      "mappedBy": "event"
+    }
+  }
+}

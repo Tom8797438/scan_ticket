@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "seats",
+  "info": {
+    "singularName": "seat",
+    "pluralName": "seats",
+    "displayName": "seat"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "event": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::event.event",
+      "inversedBy": "seats"
+    },
+    "seat_number": {
+      "type": "string",
+      "maxLength": 4,
+      "minLength": 4,
+      "default": "A001"
+    },
+    "seat_type": {
+      "type": "enumeration",
+      "enum": [
+        "Standard",
+        "VIP",
+        "PMR",
+        "Enfant",
+        "Etudiant"
+      ]
+    },
+    "statu": {
+      "type": "enumeration",
+      "enum": [
+        "available",
+        "reserved",
+        "occupied"
+      ]
+    }
+  }
+}

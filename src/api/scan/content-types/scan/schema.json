@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "scans",
+  "info": {
+    "singularName": "scan",
+    "pluralName": "scans",
+    "displayName": "scan",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "scan_date": {
+      "type": "date"
+    },
+    "scan_status": {
+      "type": "enumeration",
+      "enum": [
+        "valid",
+        "duplicate",
+        "invalid"
+      ]
+    },
+    "users": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::event.event",
+      "mappedBy": "scan"
+    },
+    "ticket": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::ticket.ticket",
+      "mappedBy": "scan"
+    }
+  }
+}

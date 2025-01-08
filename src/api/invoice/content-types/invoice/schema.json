@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "invoices",
+  "info": {
+    "singularName": "invoice",
+    "pluralName": "invoices",
+    "displayName": "invoice"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "invoice_number": {
+      "type": "string"
+    },
+    "total_amount": {
+      "type": "decimal"
+    },
+    "invoice_date": {
+      "type": "date"
+    },
+    "pdf_url": {
+      "type": "string"
+    }
+  }
+}

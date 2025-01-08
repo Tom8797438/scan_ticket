@@ -4,4 +4,9 @@ export default ({ env }) => ({
   app: {
     keys: env.array('APP_KEYS'),
   },
+  logger: {
+    level: 'debug',
+    exposeInContext: true,
+    requests: true,
+  },
 });

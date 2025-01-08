@@ -1,0 +1,79 @@
+{
+  "kind": "collectionType",
+  "collectionName": "tickets",
+  "info": {
+    "singularName": "ticket",
+    "pluralName": "tickets",
+    "displayName": "Ticket",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "customer_firstname": {
+      "type": "string"
+    },
+    "customer_lastname": {
+      "type": "string"
+    },
+    "customer_email": {
+      "type": "email"
+    },
+    "ticket_type": {
+      "type": "enumeration",
+      "enum": [
+        "standardTickets",
+        "vipTickets",
+        "pmrTickets",
+        "childrenTickets",
+        "studentTickets"
+      ]
+    },
+    "qr_code": {
+      "type": "string"
+    },
+    "statu": {
+      "type": "enumeration",
+      "enum": [
+        "valid",
+        "scanned",
+        "canceled"
+      ]
+    },
+    "purchase_date": {
+      "type": "date"
+    },
+    "users_permissions_users": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::users-permissions.user",
+      "mappedBy": "ticket"
+    },
+    "scan": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::scan.scan",
+      "inversedBy": "ticket"
+    },
+    "customer_phone": {
+      "type": "string"
+    },
+    "quantity": {
+      "type": "integer"
+    },
+    "price": {
+      "type": "integer"
+    },
+    "name_event": {
+      "type": "string"
+    },
+    "event": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::event.event",
+      "inversedBy": "tickets"
+    }
+  }
+}

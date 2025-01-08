@@ -1,0 +1,269 @@
+/* Conteneur pour l'icône et le texte */
+.icon-text-container {
+    display: flex;
+    flex-direction: column; /* Affiche l'icône au-dessus du texte */
+    align-items: center; /* Centre horizontalement */
+    justify-content: center;
+  }
+  
+  
+  /* Icônes dans le menu */
+  .menu-icon {
+    font-size: 24px; /* Taille de l'icône */
+    margin-bottom: 0.5rem; /* Espace entre l'icône et le texte */
+    color: white; /* Couleur de l'icône */
+    position: relative;
+    top:16px;
+  }
+  
+  
+  /* Labels dans le menu */
+  .menu-label {
+    font-size: 14px;
+    color: white;
+    text-align: center; /* Centrage du texte */
+    opacity: 0; /* Texte caché par défaut */
+    transition: opacity 0.3s ease; /* Animation d'apparition */
+    position: relative;
+    top:12px;
+  }
+  
+  /* Affiche le label uniquement au survol */
+  .menu-item:hover .menu-label {
+    opacity: 1;
+  }
+  
+  /* Conteneur principal */
+  .main-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #6e45e2, #88d3ce);
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+  
+  /* Overlay pour fermer EventCard en cliquant à l'extérieur */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent sombre */
+    z-index: 2;
+  }
+  
+  /* Bouton central */
+  .central-circle {
+    width: 110px;
+    height: 110px;
+    background: linear-gradient(135deg, #6e45e2, #88d3ce);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: #6e45e2;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .central-circle:hover {
+    transform: scale(1.3);
+  }
+  
+  .icon-main {
+    transition: transform 0.3s ease;
+  }
+  
+  .icon-main.rotate {
+    transform: rotate(90deg); /* Rotation lorsqu'on ouvre le menu */
+  }
+  
+  /* Menu circulaire */
+  .circle-menu {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+  }
+  
+  /* Menu affiché */
+  .circle-menu.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  /* Boutons du menu (fixes) */
+  .menu-item {
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    background: linear-gradient(135deg, #6e45e2, #88d3ce );
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    transition: background 0.3s ease, transform 0.3s ease;
+    
+  }
+  
+  .circle-menu.show .menu-item {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto; /* Active les clics quand visible */
+  }
+  
+  .menu-item:hover {
+    background: linear-gradient(135deg, #88d3ce, #6e45e2 );
+    color: #fff;
+  }
+  
+  /* Labels (cachés par défaut) */
+  .menu-item .label {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: white;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  
+  /* Labels visibles au hover */
+  .menu-item:hover .label {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  /* Positions fixes des boutons */
+  .pos-1 { top: 110px; left: 240px; }
+  .pos-2 { top: -50px; left: 150px; }
+  .pos-3 { top: 240px; left: 60px; }
+  .pos-4 { top: 90px; left: -50px; }
+  
+  /* Icônes et textes */
+  .menu-item i {
+    font-size: 24px;
+  }
+  
+  .menu-item p {
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: center;
+  }
+  
+  /* Conteneur de l'EventCard */
+  .event-card-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 3; 
+  }
+  
+  /* Pour tablettes (768px ou moins) */
+  @media (max-width: 768px) {
+    .circle-menu {
+      width: 250px;
+      height: 250px;
+    }
+  
+    .menu-item {
+      width: 80px;
+      height: 80px;
+    }
+  
+    .menu-icon {
+      font-size: 24px; /* Taille de l'icône */
+      margin-bottom: 0.5rem; /* Espace entre l'icône et le texte */
+      color: white; /* Couleur de l'icône */
+      position: relative;
+      top:22px;
+    }
+  
+    .menu-label {
+      font-size: 10px;
+    }
+  
+    .pos-1 {
+      top: 90px;
+      left: 200px;
+    }
+    .pos-2 {
+      top: -40px;
+      left: 120px;
+    }
+    .pos-3 {
+      top: 200px;
+      left: 40px;
+    }
+    .pos-4 {
+      top: 80px;
+      left: -40px;
+    }
+  }
+  
+  /* Pour mobiles (480px ou moins) */
+  @media (max-width: 480px) {
+    .circle-menu {
+      width: 200px;
+      height: 200px;
+    }
+  
+    .menu-item {
+      width: 110px;
+      height: 110px;
+    }
+  
+    .menu-icon {
+      font-size: 24px; /* Taille de l'icône */
+      margin-bottom: 0.5rem; /* Espace entre l'icône et le texte */
+      color: white; /* Couleur de l'icône */
+      position: relative;
+      top:22px;
+    }
+  
+    .menu-label {
+      font-size: 8px;
+    }
+  
+    .pos-1 {
+      top: 70px;
+      left: 180px;
+    }
+    .pos-2 {
+      top: -80px;
+      left: 110px;
+    }
+    .pos-3 {
+      top: 180px;
+      left: 20px;
+    }
+    .pos-4 {
+      top: 30px;
+      left: -90px;
+    }
+  }
+  
