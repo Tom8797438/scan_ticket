@@ -47,3 +47,4 @@ export async function generateTicketPdf(ticketData) {
     throw error;
   }
 }
+// commentaire à supprimer
