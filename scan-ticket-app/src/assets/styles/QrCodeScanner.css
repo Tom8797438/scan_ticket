@@ -61,7 +61,8 @@
     /* Colonne verticale pour les petits écrans */
     .section-scan {
       flex-direction: column;
-      align-items: center;;
+      align-items: center;
+      max-width: 400px;
     }
   
     .selection-camera,
@@ -86,6 +87,7 @@
       font-size: 1.1rem;
       margin: 5px;
       width: 310px;
+      color:#000;
     }
   
     .barcode-format-checkbox {
@@ -105,5 +107,18 @@
       font-size: 1.2rem;
       margin-top: 0.2rem;
       font-weight: bold;
+      color: #000;
     }
   }
+
+  .scan-response {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    color:#000;
+  }
+  .scan-response p {
+    margin: 5px 0;
+  }
+  

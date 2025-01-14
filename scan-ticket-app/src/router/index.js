@@ -17,25 +17,25 @@ const router = createRouter({
       path: '/menu',
       name: 'menu',
       component: MenuView, // Page protégée (Menu principal)
-      //meta: { requiresAuth: true }, // Nécessite une authentification
-    },
-    {
-      path: '/:pathMatch(.*)*', // Redirection par défaut
-      redirect: '/login',
+      meta: { requiresAuth: true }, // Nécessite une authentification
     },
     {
       path: '/events/details', // Utilise documentId comme paramètre requis
       name: 'EventDetails',
       component: EventDetails,
+      meta: { requiresAuth: true }, // Nécessite une authentification
     },
     
     {
       path: "/scan-qr-code",
       name: "QrCodeScanner",
       component: QrCodeScanner,
-      //meta: { requiresAuth: true }, // Nécessite une authentification
+      meta: { requiresAuth: true }, // Nécessite une authentification
     },
-
+    {
+      path: '/:pathMatch(.*)*', // Redirection par défaut
+      redirect: '/login',
+    },
   ],
 });
 
@@ -43,9 +43,9 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore();
 
-  if (to.meta.requiresAuth && !authStore.token) {
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login'); // Redirige vers la page de connexion si non authentifié
-  } else if (to.name === 'login' && authStore.token) {
+  } else if (to.name === 'login' && authStore.isAuthenticated) {
     next('/menu'); // Redirige vers le menu si déjà connecté
   } else {
     next(); // Continue vers la route demandée

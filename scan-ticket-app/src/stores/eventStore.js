@@ -71,9 +71,7 @@ export const useEventStore = defineStore('eventStore', {
     } finally {
       this.loading = false;
     }
-  }
-  
-  
+  } 
   
 },
 });

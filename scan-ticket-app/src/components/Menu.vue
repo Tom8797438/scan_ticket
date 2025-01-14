@@ -58,6 +58,9 @@
   import { useRouter } from 'vue-router';
   import QrCodeScanner from '@/components/QrCodeScanner.vue'
 
+  const authStore = useAuthStore();
+  const router = useRouter();
+
   // État pour ouvrir/fermer le menu
   const menuOpen = ref(false);
   
@@ -101,11 +104,11 @@
         showCreateEvent.value = true;
       }
     },
-    {
-      label: 'Acheter Billet',
-      icon: 'fas fa-ticket-alt',
-      action: () => alert('Acheter un billet'),
-    },
+    // {
+    //   label: 'Acheter Billet',
+    //   icon: 'fas fa-ticket-alt',
+    //   action: () => alert('Acheter un billet'),
+    // },
     {
       label: 'Scanner Billet',
       icon: 'fas fa-qrcode',
@@ -126,9 +129,6 @@
     action: () => handleLogout(),
   },
 ];
-
-const authStore = useAuthStore();
-const router = useRouter();
 
 // Fonction pour gérer la déconnexion
 const handleLogout = () => {

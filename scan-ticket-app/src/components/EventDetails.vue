@@ -3,7 +3,7 @@
     <div class="event-card" @click.stop>
       <!-- Colonne gauche -->
       <div class="event-details">
-        <h2 class="event-title">{{ selectedEvent.name || 'Non spécifié' }}</h2>
+        <h2 class="event-title">{{ selectedEvent?.name || 'Non spécifié' }}</h2>
         <p><strong>Date :</strong> {{ selectedEvent.event_date || 'Non spécifié' }}</p>
         <p><strong>Lieu :</strong> {{ selectedEvent.location || 'Non spécifié' }}</p>
         <p><strong>Adresse :</strong> {{ selectedEvent.address || 'Non spécifié' }}</p>
@@ -57,25 +57,29 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-import { useEventStore } from '@/stores/eventStore';
-import { useBookingStore } from '@/stores/bookingStore';
-import { useTicketStore } from '@/stores/ticketStore';
-import { useRouter } from 'vue-router';
+import { ref, computed } from 'vue'; // Importation des outils de Vue.js pour gérer les données réactives et calculées
+import { useEventStore } from '@/stores/eventStore'; // Importation du store pour gérer les événements
+import { useBookingStore } from '@/stores/bookingStore'; // Importation du store pour gérer les réservations
+import { useTicketStore } from '@/stores/ticketStore'; // Importation du store pour gérer les tickets
+import { useRouter } from 'vue-router'; // Importation du routeur pour la navigation entre les pages
 
 export default {
   setup() {
+    // Initialisation du routeur
     const router = useRouter();
+
+    // Initialisation des stores
     const eventStore = useEventStore();
     const bookingStore = useBookingStore();
     const ticketStore = useTicketStore();
 
-    const firstname = ref('');
-    const lastname = ref('');
-    const email = ref('');
-    const phone = ref('');
+    // Références pour les champs utilisateur
+    const firstname = ref(''); // Prénom de l'utilisateur
+    const lastname = ref(''); // Nom de l'utilisateur
+    const email = ref(''); // Email de l'utilisateur
+    const phone = ref(''); // Téléphone de l'utilisateur
 
-    // Définir les types de tickets dynamiquement
+    // Définir dynamiquement les types de tickets en fonction de l'événement sélectionné
     const ticketTypes = ref([
       { name: 'standardTickets', label: 'Standard', price: eventStore.selectedEvent?.price_standard || 0, quantity: 0 },
       { name: 'vipTickets', label: 'VIP', price: eventStore.selectedEvent?.price_vip || 0, quantity: 0 },
@@ -84,39 +88,52 @@ export default {
       { name: 'studentTickets', label: 'Étudiants', price: eventStore.selectedEvent?.price_student || 0, quantity: 0 },
     ]);
 
-    const selectedEvent = computed(() => eventStore.selectedEvent);
+    //const selectedEvent = computed(() => eventStore.selectedEvent);
+
+    // Calcul de l'événement sélectionné avec une redirection si aucun n'est sélectionné
+    const selectedEvent = computed(() => {
+    if (!eventStore.selectedEvent) {
+      console.error("Aucun événement sélectionné");
+      router.push('/Menu'); // Redirige vers la liste des événements
+      return null;
+    }
+    return eventStore.selectedEvent; // Renvoie l'événement sélectionné
+  });
+
 
     const total = computed(() => {
       return ticketTypes.value.reduce((sum, ticketType) => {
         return sum + ticketType.quantity * ticketType.price;
-      }, 0);
+      }, 0); // La somme commence à 0
     });
 
+    // Fonction pour afficher le total dans la console (debug)
     const calculateTotal = () => {
       console.log("Total calculé :", total.value);
     };
 
-    const bookTickets = async () => {
-      // Mettre à jour les données utilisateur dans le store
-      bookingStore.setUser({
-        customer_firstname: firstname.value.trim(),
-        customer_lastname: lastname.value.trim(),
-        customer_email: email.value.trim(),
-        customer_phone: phone.value.trim(),
-      });
+     // Fonction pour réserver des tickets
+     const bookTickets = async () => {
+  // Mettre à jour les données utilisateur dans le store
+  bookingStore.setUser({
+    customer_firstname: firstname.value.trim(),
+    customer_lastname: lastname.value.trim(),
+    customer_email: email.value.trim(),
+    customer_phone: phone.value.trim(),
+  });
 
-      // Préparer les tickets
-      const ticketsToCreate = ticketTypes.value.flatMap((ticketType) => {
-        return Array.from({ length: ticketType.quantity }, () => ({
-          customer_firstname: bookingStore.user.customer_firstname,
-          customer_lastname: bookingStore.user.customer_lastname,
-          customer_email: bookingStore.user.customer_email,
-          customer_phone: bookingStore.user.customer_phone,
-          ticket_type: ticketType.name,
-          quantity: ticketType.quantity,
-          price: ticketType.price,
-        }));
-      });
+  // Préparation des tickets
+  const ticketsToCreate = ticketTypes.value
+    .filter((ticketType) => ticketType.quantity > 0) // Filtrer les types de tickets avec quantité > 0
+    .map((ticketType) => ({
+      customer_firstname: bookingStore.user.customer_firstname,
+      customer_lastname: bookingStore.user.customer_lastname,
+      customer_email: bookingStore.user.customer_email,
+      customer_phone: bookingStore.user.customer_phone,
+      ticket_type: ticketType.name,
+      quantity: ticketType.quantity,
+      price: ticketType.price,
+    }));
 
       console.log("Tickets prêts à être envoyés :", ticketsToCreate);
 
@@ -126,7 +143,7 @@ export default {
 
         // Créer les tickets via ticketStore
         const createdTickets = await ticketStore.createMultipleTickets();
-        console.log("Tickets créés :", createdTickets);
+        console.log("de bookTickets dans EventDetails.vue Tickets créés :", createdTickets);
 
         alert("Réservation réussie !");
       } catch (error) {
@@ -135,9 +152,10 @@ export default {
       }
     };
 
+    // Fonction pour revenir à la liste des événements
     const goBackToEvents = () => {
-      eventStore.selectedEvent = null;
-      router.push('/Menu');
+      eventStore.selectedEvent = null;// Réinitialise l'événement sélectionné
+      router.push('/Menu'); // Redirige vers le menu
     };
 
     return {

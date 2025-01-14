@@ -154,10 +154,10 @@
   }
   
   /* Positions fixes des boutons */
-  .pos-1 { top: 110px; left: 240px; }
-  .pos-2 { top: -50px; left: 150px; }
-  .pos-3 { top: 240px; left: 60px; }
-  .pos-4 { top: 90px; left: -50px; }
+  .pos-1 { top: 150px; left: 240px; }
+  .pos-2 { top: -50px; left: 100px; }
+  .pos-3 { top: 150px; left: -50px; }
+  /* .pos-4 { top: 95px; left: 95px; } */
   
   /* Icônes et textes */
   .menu-item i {
@@ -219,10 +219,10 @@
       top: 200px;
       left: 40px;
     }
-    .pos-4 {
+    /* .pos-4 {
       top: 80px;
       left: -40px;
-    }
+    } */
   }
   
   /* Pour mobiles (480px ou moins) */
@@ -250,20 +250,20 @@
     }
   
     .pos-1 {
-      top: 70px;
+      top: 90px;
       left: 180px;
     }
     .pos-2 {
-      top: -80px;
-      left: 110px;
+      top: -100px;
+      left: 50px;
     }
     .pos-3 {
-      top: 180px;
-      left: 20px;
-    }
-    .pos-4 {
-      top: 30px;
+      top: 90px;
       left: -90px;
     }
+    /* .pos-4 {
+      top: 30px;
+      left: -90px;
+    } */
   }
   

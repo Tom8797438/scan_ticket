@@ -10,13 +10,20 @@ export const useAuthStore = defineStore('authStore', {
     token: null, // Token JWT
     error: null, // Message d'erreur
   }),
+
+  // Ajout des getters
+  getters: {
+    isAuthenticated: (state) => !!state.user, // Retourne true si l'utilisateur est connecté
+  },
+
   actions: {
     async login(identifier, password) {
       try {
         const response = await axios.post('http://localhost:1337/api/auth/local', {
           identifier,
           password,
-        });
+        },{ headers: { 'Content-Type': 'application/json' } }
+      );
         console.log('Réponse Strapi :', response);
         
         this.token = response.data.jwt;
@@ -35,9 +42,9 @@ export const useAuthStore = defineStore('authStore', {
       }
     },
 
-    logout(router) {
-      this.user = null;
-      this.token = null;
+      logout(router) {
+        this.user = null;
+        this.token = null;
     
       // Supprimer le cookie
       Cookies.remove('authToken');
@@ -56,9 +63,6 @@ export const useAuthStore = defineStore('authStore', {
         console.error('Router instance is not provided to logout');
       }
     },
-    
-    
-    
 
     async autoLogin() {
       const token = Cookies.get('authToken');

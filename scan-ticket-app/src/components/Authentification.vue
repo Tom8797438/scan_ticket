@@ -1,9 +1,9 @@
 <template>
   <div class="login-container">
-    <h1>Connexion</h1>
+    <h1 class="title">Connexion</h1>
     <form @submit.prevent="login">
       <div class="form-group">
-        <label for="identifier">Email ou Nom d'utilisateur</label>
+        <label for="identifier" class="title">Email ou Nom d'utilisateur</label>
         <input
           v-model="identifier"
           type="text"
@@ -13,7 +13,7 @@
         />
       </div>
       <div class="form-group">
-        <label for="password">Mot de passe</label>
+        <label for="password" class="title">Mot de passe</label>
         <input
           v-model="password"
           type="password"

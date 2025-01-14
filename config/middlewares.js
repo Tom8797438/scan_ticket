@@ -3,6 +3,7 @@ export default ({ env }) => [
   {
     name: 'strapi::cors',
     config: {
+      //origin: ['*'], // autoriser toute les origines (temporaire)
       origin: ['http://localhost:5173'], // Origine autorisée
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       credentials: true,
