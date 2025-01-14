@@ -39,13 +39,18 @@ export const useTicketStore = defineStore('ticketStore', {
           `http://localhost:1337/api/tickets`,
           { data: ticketPayload }
         );
-
+        if (!response.data || !response.data.data) {
+          throw new Error("Réponse invalide lors de la création du ticket.");
+        }
+        const createdTicket = response.data.data;
+        
         console.log("Ticket créé :", response.data);
 
         // Retourner les données du ticket créé
         return {
           ...ticketPayload,
-          id: response.data.data.id,
+          id: createdTicket.id,
+          documentId: createdTicket.documentId,
         };
       } catch (error) {
         console.error("Erreur lors de la création d'un ticket :", error);

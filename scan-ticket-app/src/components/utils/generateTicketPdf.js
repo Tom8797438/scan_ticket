@@ -10,9 +10,10 @@ export async function generateTicketPdf(ticketData) {
     // Contenu étendu pour le QR code
     const qrCodeContent = JSON.stringify({
       qr_code: ticketData.qr_code, // Identifiant unique
+      id: ticketData.id,
       documentId: ticketData.documentId, // DocumentId du ticket
     });
-    
+
     // Log du contenu du QR code pour débogage
     console.log("generateTicketPdf Contenu du QR code :", qrCodeContent);
 

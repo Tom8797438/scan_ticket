@@ -133,6 +133,8 @@ export default {
       ticket_type: ticketType.name,
       quantity: ticketType.quantity,
       price: ticketType.price,
+      id:ticketType.id,
+      documentId: ticketType.documentId,
     }));
 
       console.log("Tickets prêts à être envoyés :", ticketsToCreate);
