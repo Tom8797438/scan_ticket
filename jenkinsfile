@@ -1,0 +1,70 @@
+pipeline {
+    agent any
+
+    environment {
+        FRONTEND_DIR = 'scan-ticket-app'
+        BACKEND_DIR = 'src'
+        FRONTEND_BUILD_DIR = '/var/www/scanner-frontend'
+        BACKEND_SERVICE_NAME = 'scanner-backend'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git 'https://github.com/Tom8797438/scan_ticket.git'
+            }
+        }
+        stage('Install Dependencies') {
+            parallel {
+                stage('Install Frontend Dependencies') {
+                    steps {
+                        dir("${FRONTEND_DIR}") {
+                            sh 'npm install'
+                        }
+                    }
+                }
+                stage('Install Backend Dependencies') {
+                    steps {
+                        dir("${BACKEND_DIR}") {
+                            sh 'npm install'
+                        }
+                    }
+                }
+            }
+        }
+        stage('Build Frontend') {
+            steps {
+                dir("${FRONTEND_DIR}") {
+                    sh 'npm run build'
+                }
+            }
+        }
+        stage('Deploy Frontend') {
+            steps {
+                sh """
+                sudo rm -rf ${FRONTEND_BUILD_DIR}/*
+                sudo cp -r ${FRONTEND_DIR}/dist/* ${FRONTEND_BUILD_DIR}
+                """
+            }
+        }
+        stage('Deploy Backend') {
+            steps {
+                dir("${BACKEND_DIR}") {
+                    sh """
+                    pm2 stop ${BACKEND_SERVICE_NAME} || true
+                    pm2 start npm --name "${BACKEND_SERVICE_NAME}" -- start
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build and Deployment Successful!'
+        }
+        failure {
+            echo 'Build or Deployment Failed. Check the logs.'
+        }
+    }
+}
