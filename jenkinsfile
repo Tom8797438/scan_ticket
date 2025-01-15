@@ -11,19 +11,19 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/Tom8797438/scan_ticket.git'
+                git branch: 'main', url: 'https://github.com/Tom8797438/scan_ticket.git'
             }
         }
         stage('Install Dependencies') {
             parallel {
-                stage('Install Frontend Dependencies') {
+                stage('Frontend Dependencies') {
                     steps {
                         dir("${FRONTEND_DIR}") {
                             sh 'npm install'
                         }
                     }
                 }
-                stage('Install Backend Dependencies') {
+                stage('Backend Dependencies') {
                     steps {
                         dir("${BACKEND_DIR}") {
                             sh 'npm install'
@@ -42,8 +42,8 @@ pipeline {
         stage('Deploy Frontend') {
             steps {
                 sh """
-                sudo rm -rf ${FRONTEND_BUILD_DIR}/*
-                sudo cp -r ${FRONTEND_DIR}/dist/* ${FRONTEND_BUILD_DIR}
+                rm -rf ${FRONTEND_BUILD_DIR}/*
+                cp -r ${FRONTEND_DIR}/dist/* ${FRONTEND_BUILD_DIR}
                 """
             }
         }
