@@ -14,6 +14,7 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/Tom8797438/scan_ticket.git'
             }
         }
+
         stage('Install Dependencies') {
             parallel {
                 stage('Frontend Dependencies') {
@@ -26,12 +27,42 @@ pipeline {
                 stage('Backend Dependencies') {
                     steps {
                         dir("${BACKEND_DIR}") {
-                            sh 'npm install'
+                            sh '''
+                            npm install
+                            npm install qrcode jspdf sqlite3
+                            '''
                         }
                     }
                 }
             }
         }
+
+        stage('Setup Backend Environment') {
+            steps {
+                writeFile file: "${BACKEND_DIR}/.env", text: '''
+                HOST=0.0.0.0
+                PORT=1337
+
+                APP_KEYS=Ez/sQSwcKow6aQHjQx+h1A==,Ql0C9axGLLmRbIj9YCNE0A==,A7izS0OZrvpvv4VvpdxyJw==,LCi2BVEhlKztB5KaCdjzMw==
+                API_TOKEN_SALT=yglTa4BSbK9xbz2UY4PKmA==
+                ADMIN_JWT_SECRET=RaxA03Gv0pVZx9Zyck9AYQ==
+                TRANSFER_TOKEN_SALT=rfupr1SZJR5iashCU7gXwQ==
+
+                DATABASE_CLIENT=sqlite
+                DATABASE_FILENAME=.tmp/data.db
+                JWT_SECRET=mF9xDsFDCtnFHHSueOg6Mw==
+                '''
+            }
+
+            // Assure que Strapi peut écrire dans les répertoires nécessaires
+            steps {
+                sh '''
+                mkdir -p ${BACKEND_DIR}/.cache ${BACKEND_DIR}/.tmp
+                chmod -R 775 ${BACKEND_DIR}/.cache ${BACKEND_DIR}/.tmp
+                '''
+            }
+        }
+
         stage('Build Frontend') {
             steps {
                 dir("${FRONTEND_DIR}") {
@@ -39,6 +70,7 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy Frontend') {
             steps {
                 sh """
@@ -47,6 +79,7 @@ pipeline {
                 """
             }
         }
+
         stage('Deploy Backend') {
             steps {
                 dir("${BACKEND_DIR}") {
