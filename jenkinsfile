@@ -6,6 +6,8 @@ pipeline {
         BACKEND_DIR = 'src'
         FRONTEND_BUILD_DIR = '/var/www/scanner-frontend'
         BACKEND_SERVICE_NAME = 'scanner-backend'
+        FRONTEND_IMAGE = 'scan-ticket-frontend'
+        BACKEND_IMAGE = 'scan-ticket-backend'
     }
 
     stages {
@@ -15,79 +17,42 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Build Docker Images') {
             parallel {
-                stage('Frontend Dependencies') {
+                stage('Build Frontend Docker Image') {
                     steps {
-                        dir("${FRONTEND_DIR}") {
-                            sh 'npm install'
-                        }
+                        sh """
+                        docker build -t ${FRONTEND_IMAGE} -f Dockerfile.frontend .
+                        """
                     }
                 }
-                stage('Backend Dependencies') {
+                stage('Build Backend Docker Image') {
                     steps {
-                        dir("${BACKEND_DIR}") {
-                            sh '''
-                            npm install
-                            npm install qrcode jspdf sqlite3
-                            '''
-                        }
+                        sh """
+                        docker build -t ${BACKEND_IMAGE} -f Dockerfile.backend .
+                        """
                     }
                 }
             }
         }
 
-        stage('Setup Backend Environment') {
-            steps {
-                writeFile file: "${BACKEND_DIR}/.env", text: '''
-                HOST=0.0.0.0
-                PORT=1337
-
-                APP_KEYS=Ez/sQSwcKow6aQHjQx+h1A==,Ql0C9axGLLmRbIj9YCNE0A==,A7izS0OZrvpvv4VvpdxyJw==,LCi2BVEhlKztB5KaCdjzMw==
-                API_TOKEN_SALT=yglTa4BSbK9xbz2UY4PKmA==
-                ADMIN_JWT_SECRET=RaxA03Gv0pVZx9Zyck9AYQ==
-                TRANSFER_TOKEN_SALT=rfupr1SZJR5iashCU7gXwQ==
-
-                DATABASE_CLIENT=sqlite
-                DATABASE_FILENAME=.tmp/data.db
-                JWT_SECRET=mF9xDsFDCtnFHHSueOg6Mw==
-                '''
-            }
-
-            // Assure que Strapi peut écrire dans les répertoires nécessaires
-            steps {
-                sh '''
-                mkdir -p ${BACKEND_DIR}/.cache ${BACKEND_DIR}/.tmp
-                chmod -R 775 ${BACKEND_DIR}/.cache ${BACKEND_DIR}/.tmp
-                '''
-            }
-        }
-
-        stage('Build Frontend') {
-            steps {
-                dir("${FRONTEND_DIR}") {
-                    sh 'npm run build'
-                }
-            }
-        }
-
-        stage('Deploy Frontend') {
+        stage('Deploy Frontend Container') {
             steps {
                 sh """
-                rm -rf ${FRONTEND_BUILD_DIR}/*
-                cp -r ${FRONTEND_DIR}/dist/* ${FRONTEND_BUILD_DIR}
+                docker stop frontend-container || true
+                docker rm frontend-container || true
+                docker run -d -p 3000:3000 --name frontend-container ${FRONTEND_IMAGE}
                 """
             }
         }
 
-        stage('Deploy Backend') {
+        stage('Deploy Backend Container') {
             steps {
-                dir("${BACKEND_DIR}") {
-                    sh """
-                    pm2 stop ${BACKEND_SERVICE_NAME} || true
-                    pm2 start npm --name "${BACKEND_SERVICE_NAME}" -- start
-                    """
-                }
+                sh """
+                docker stop backend-container || true
+                docker rm backend-container || true
+                docker run -d -p 1337:1337 --name backend-container ${BACKEND_IMAGE}
+                """
             }
         }
     }
