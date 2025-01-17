@@ -1,0 +1,26 @@
+# Étape 1 : Utiliser une image Node.js
+FROM node:18
+
+# Étape 2 : Définir le répertoire de travail dans le conteneur
+WORKDIR /backend
+
+# Étape 3 : Copier les fichiers package.json et package-lock.json pour les dépendances
+COPY src/package*.json ./
+
+# Étape 4 : Installer les dépendances
+RUN npm install
+
+# Étape 5 : Copier les fichiers du projet dans le conteneur
+COPY src/ .
+
+# Étape 6 : Copier le fichier .env depuis la racine du projet vers le conteneur
+COPY .env /backend/.env
+
+# Étape 7 : Assurer que les répertoires nécessaires existent et ont les bonnes permissions
+RUN mkdir -p .cache .tmp && chmod -R 775 .cache .tmp
+
+# Étape 8 : Exposer le port utilisé par Strapi
+EXPOSE 1337
+
+# Étape 9 : Démarrer l'application Strapi
+CMD ["npm", "start"]
