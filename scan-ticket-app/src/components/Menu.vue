@@ -1,7 +1,5 @@
 <template>
-    
-    <div class="main-container">
-       
+    <div class="main-container bg-pan-left">
       <!-- Bouton central -->
       <div class="central-circle" @click="toggleMenu">
         <i class="icon-main" :class="{ rotate: menuOpen }">☰</i>
@@ -46,7 +44,6 @@
         </div>
       </div>
     </div>
- 
   </template>
     
 

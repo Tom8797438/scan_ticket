@@ -42,11 +42,38 @@
     width: 100vw;
     margin: 0;
     padding: 0;
-    background: linear-gradient(135deg, #6e45e2, #88d3ce);
+    background: linear-gradient(135deg,#6e45e2, #88d3ce, #3f53d3, #9ed013);
+    background-size: 400%; /* Ajout pour rendre l'effet de l'animation plus visible */
+
     position: fixed;
     top: 0;
     left: 0;
+
+    animation: bg-pan-left 8s linear 8s infinite alternate both; 
   }
+
+/*
+ * ----------------------------------------
+ * animation bg-pan-left
+ * ----------------------------------------
+ */
+@-webkit-keyframes bg-pan-left {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes bg-pan-left {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
   
   /* Overlay pour fermer EventCard en cliquant à l'extérieur */
   .overlay {
@@ -73,6 +100,7 @@
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    animation: bg-pan-left 8s linear 8s infinite alternate both; 
   }
   
   .central-circle:hover {
@@ -193,6 +221,7 @@
     .menu-item {
       width: 80px;
       height: 80px;
+      animation: none;
     }
   
     .menu-icon {
@@ -219,10 +248,6 @@
       top: 200px;
       left: 40px;
     }
-    /* .pos-4 {
-      top: 80px;
-      left: -40px;
-    } */
   }
   
   /* Pour mobiles (480px ou moins) */
@@ -235,12 +260,13 @@
     .menu-item {
       width: 110px;
       height: 110px;
+      animation: none;
     }
   
     .menu-icon {
-      font-size: 24px; /* Taille de l'icône */
-      margin-bottom: 0.5rem; /* Espace entre l'icône et le texte */
-      color: white; /* Couleur de l'icône */
+      font-size: 24px;
+      margin-bottom: 0.5rem; 
+      color: white; 
       position: relative;
       top:22px;
     }
@@ -261,9 +287,5 @@
       top: 90px;
       left: -90px;
     }
-    /* .pos-4 {
-      top: 30px;
-      left: -90px;
-    } */
   }
   
