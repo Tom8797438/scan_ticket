@@ -24,4 +24,5 @@ RUN mkdir -p .cache .tmp && chmod -R 775 .cache .tmp
 EXPOSE 1337
 
 # Étape 9 : Démarrer l'application Strapi
+
 CMD ["npm", "run", "develop"]
