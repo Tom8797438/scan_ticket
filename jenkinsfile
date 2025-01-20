@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        FRONTEND_DIR = 'scan-ticket'
+        FRONTEND_DIR = 'scan-ticket-app'
         BACKEND_DIR = 'src'
         FRONTEND_IMAGE = 'scan-ticket-frontend'
         BACKEND_IMAGE = 'scan-ticket-backend'
@@ -42,8 +42,9 @@ pipeline {
                 }
                 stage('Build Backend Docker Image') {
                     steps {
-                        dir("${BACKEND_DIR}") {
-                            sh 'docker build -t ${BACKEND_IMAGE} -f Dockerfile .'
+                        sh """
+                        docker build -t ${BACKEND_IMAGE} -f ${BACKEND_DIR}/Dockerfile ${BACKEND_DIR}
+                        """
                         }
                     }
                 }
@@ -79,7 +80,7 @@ pipeline {
                 sh """
                 docker save ${FRONTEND_IMAGE} | ssh ${VM3_USER}@${VM3_IP} 'docker load'
                 ssh ${VM3_USER}@${VM3_IP} 'docker stop frontend-container || true && docker rm frontend-container || true'
-                ssh ${VM3_USER}@${VM3_IP} 'docker run -d -p 3000:3000 --name frontend-container ${FRONTEND_IMAGE}'
+                ssh ${VM3_USER}@${VM3_IP} 'docker run -d -p 80:80 --name frontend-container ${FRONTEND_IMAGE}'
                 """
             }
         }
