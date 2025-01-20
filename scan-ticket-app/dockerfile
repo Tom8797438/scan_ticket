@@ -16,7 +16,7 @@ RUN npm install qrcode --save
 COPY . ./
 
 # Construire l'application
-RUN npm install -g npm@10.2.3 
+RUN npm run build
 
 # Utiliser une image Nginx pour servir les fichiers statiques
 FROM nginx:latest
