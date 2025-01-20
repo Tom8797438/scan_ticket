@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        FRONTEND_DIR = 'scan-ticket-app'
+        FRONTEND_DIR = 'scan-ticket-app/src'
         BACKEND_DIR = 'src'
         FRONTEND_IMAGE = 'scan-ticket-frontend'
         BACKEND_IMAGE = 'scan-ticket-backend'
