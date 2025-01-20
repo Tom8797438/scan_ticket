@@ -79,7 +79,6 @@ pipeline {
                 """
             }
         }
-    }
 
     post {
         success {
@@ -89,4 +88,4 @@ pipeline {
             echo 'Build or Deployment Failed. Check the logs.'
         }
     }
-
+}
