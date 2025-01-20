@@ -79,7 +79,88 @@ pipeline {
                 """
             }
         }
+pipeline {
+    agent any
 
+    environment {
+        FRONTEND_DIR = 'scan-ticket-app'
+        BACKEND_DIR = 'src'
+        FRONTEND_IMAGE = 'scan-ticket-frontend'
+        BACKEND_IMAGE = 'scan-ticket-backend'
+        VM1_IP = "192.168.1.25"
+        VM2_IP = "192.168.1.35"
+        VM3_IP = "192.168.1.40"
+        VM1_USER = "tom"
+        VM2_USER = "thomas"
+        VM3_USER = "thomasfrontend"
+    }
+
+    stages {
+        stage('Start') {
+            steps {
+                echo 'Pipeline execution started...'
+            }
+        }
+
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Tom8797438/scan_ticket.git'
+            }
+        }
+        stage('Cleanup Before Build') {
+            steps {
+                sh 'docker system prune -af'
+            }
+        }
+        stage('Build Docker Images') {
+            parallel {
+                stage('Build Frontend Docker Image') {
+                    steps {
+                        sh """
+                        docker build -t ${FRONTEND_IMAGE} -f ${FRONTEND_DIR}/Dockerfile ${FRONTEND_DIR}
+                        """
+                    }
+                }
+                stage('Build Backend Docker Image') {
+                    steps {
+                        sh """
+                        docker build -t ${BACKEND_IMAGE} -f ${BACKEND_DIR}/Dockerfile ${BACKEND_DIR}
+                        """
+                        }
+                    }
+                }
+            }
+        stage('Test SSH Connection to VM2') {
+            steps {
+                sh """
+                ssh -o BatchMode=yes -o ConnectTimeout=5 ${VM2_USER}@${VM2_IP} 'echo Connection Successful' || echo 'SSH connection to VM2 failed'
+                """
+            }
+        }
+        stage('Cleanup Old Docker Images') {
+            steps {
+                sh 'docker image prune -f'
+            }
+        }
+        stage('Deploy Backend to VM2') {
+            steps {
+                sh """
+                docker save ${BACKEND_IMAGE} | ssh ${VM2_USER}@${VM2_IP} 'docker load'
+                ssh ${VM2_USER}@${VM2_IP} 'docker stop backend-container || true && docker rm backend-container || true'
+                ssh ${VM2_USER}@${VM2_IP} 'docker run -d -p 1337:1337 --name backend-container ${BACKEND_IMAGE}'
+                """
+            }
+        }
+        stage('Deploy Frontend to VM3') {
+            steps {
+                sh """
+                docker save ${FRONTEND_IMAGE} | ssh ${VM3_USER}@${VM3_IP} 'docker load'
+                ssh ${VM3_USER}@${VM3_IP} 'docker stop frontend-container || true && docker rm frontend-container || true'
+                ssh ${VM3_USER}@${VM3_IP} 'docker run -d -p 80:80 --name frontend-container ${FRONTEND_IMAGE}'
+                """
+            }
+        }
+    }
     post {
         success {
             echo 'Build and Deployment Successful!'
@@ -89,3 +170,4 @@ pipeline {
         }
     }
 }
+
