@@ -5,15 +5,15 @@ FROM node:18 AS build
 WORKDIR /app
 
 # Copier les fichiers package.json et package-lock.json
-COPY scan-ticket-app/package*.json ./
+COPY scan-ticket/package*.json ./
 
 # Installer les dépendances
 RUN npm install -g npm@latest
 RUN npm install qrcode --save
 
 # Copier tout le code source du frontend
-# COPY scan-ticket-app/ ./
-COPY . .
+COPY scan-ticket/ ./
+#COPY . .
 
 # Construire l'application
 RUN npm run build
