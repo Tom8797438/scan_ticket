@@ -38,7 +38,7 @@ pipeline {
                 stage('Build Frontend Docker Image') {
                     steps {
                         sh """
-                        docker build -t ${FRONTEND_IMAGE} -f ${FRONTEND_DIR}/src/dockerfile ${FRONTEND_DIR}
+                        docker build -t ${FRONTEND_IMAGE} -f ${FRONTEND_DIR}/dockerfile ${FRONTEND_DIR}
                         """
                     }
                 }
@@ -46,7 +46,7 @@ pipeline {
                 stage('Build Backend Docker Image') {
                     steps {
                         sh """
-                        docker build -t ${BACKEND_IMAGE} -f ${BACKEND_DIR}/dockerfile ${BACKEND_DIR}
+                        docker build -t ${BACKEND_IMAGE} -f ${BACKEND_DIR}/dockerfile .
                         """
                     }
                 }

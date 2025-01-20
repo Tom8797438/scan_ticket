@@ -1,5 +1,5 @@
 # Utiliser une image Node.js pour construire le frontend
-FROM node:18 AS build
+FROM node:20 AS build
 
 # Définir le répertoire de travail
 WORKDIR /app
@@ -16,7 +16,7 @@ RUN npm install qrcode --save
 COPY . ./
 
 # Construire l'application
-RUN npm run build
+RUN npm install -g npm@10.2.3 
 
 # Utiliser une image Nginx pour servir les fichiers statiques
 FROM nginx:latest
