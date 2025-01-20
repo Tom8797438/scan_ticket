@@ -8,7 +8,8 @@ WORKDIR /app
 COPY scan-ticket-app/package*.json ./
 
 # Installer les dépendances
-RUN npm install
+RUN npm install -g npm@latest
+RUN npm install qrcode --save
 
 # Copier tout le code source du frontend
 COPY scan-ticket-app/ ./

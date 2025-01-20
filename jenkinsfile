@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        FRONTEND_DIR = 'scan-ticket-app/src'
+        FRONTEND_DIR = 'scan-ticket-app'
         BACKEND_DIR = 'src'
         FRONTEND_IMAGE = 'scan-ticket-frontend'
         BACKEND_IMAGE = 'scan-ticket-backend'
@@ -26,13 +26,17 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/Tom8797438/scan_ticket.git'
             }
         }
-
+        stage('Cleanup Before Build') {
+            steps {
+                sh 'docker system prune -af'
+            }
+        }
         stage('Build Docker Images') {
             parallel {
                 stage('Build Frontend Docker Image') {
                     steps {
                         sh """
-                        docker build -t ${FRONTEND_IMAGE} -f ${FRONTEND_DIR}/Dockerfile .
+                        docker build -t ${FRONTEND_IMAGE} -f ${FRONTEND_DIR}/Dockerfile ${FRONTEND_DIR}
                         """
                     }
                 }
