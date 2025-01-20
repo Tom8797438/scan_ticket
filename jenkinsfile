@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        FRONTEND_DIR = 'scan-ticket-app'
+        FRONTEND_DIR = 'scan-ticket'
         BACKEND_DIR = 'src'
         FRONTEND_IMAGE = 'scan-ticket-frontend'
         BACKEND_IMAGE = 'scan-ticket-backend'
@@ -36,7 +36,7 @@ pipeline {
                 stage('Build Frontend Docker Image') {
                     steps {
                         sh """
-                        docker build -t ${FRONTEND_IMAGE} -f ${FRONTEND_DIR}/Dockerfile ${FRONTEND_DIR} || exit 1
+                        docker build -t ${FRONTEND_IMAGE} -f ${FRONTEND_DIR}/Dockerfile ${FRONTEND_DIR}
                         """
                     }
                 }
