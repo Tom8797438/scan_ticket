@@ -2,7 +2,7 @@
 FROM node:18
 
 # Étape 2 : Définir le répertoire de travail dans le conteneur
-WORKDIR /backend
+WORKDIR /src
 
 # Étape 3 : Copier les fichiers package.json et package-lock.json pour installer les dépendances
 COPY package*.json ./
@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Étape 6 : Copier le fichier .env (assurez-vous qu'il existe à la racine de votre projet)
-COPY .env /backend/.env
+COPY .env /src/.env
 
 # Étape 7 : Assurer que les répertoires nécessaires existent et ont les bonnes permissions
 RUN mkdir -p .cache .tmp && chmod -R 775 .cache .tmp
