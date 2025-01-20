@@ -8,10 +8,10 @@ pipeline {
         BACKEND_IMAGE = 'scan-ticket-backend'
         VM1_IP = "192.168.1.25"
         VM2_IP = "192.168.1.35"
-        //VM3_IP = "192.168.1.40"
+        VM3_IP = "192.168.1.40"
         VM1_USER = "tom"
         VM2_USER = "thomas"
-        //VM3_USER = "tomfrontend"
+        VM3_USER = "thomasfrontend"
     }
 
     stages {
@@ -36,7 +36,7 @@ pipeline {
                 stage('Build Frontend Docker Image') {
                     steps {
                         sh """
-                        docker build -t ${FRONTEND_IMAGE} -f ${FRONTEND_DIR}/Dockerfile ${FRONTEND_DIR}
+                        docker build -t ${FRONTEND_IMAGE} -f ${FRONTEND_DIR}/Dockerfile ${FRONTEND_DIR} || exit 1
                         """
                     }
                 }
@@ -74,15 +74,15 @@ pipeline {
             }
         }
 
-        // stage('Deploy Frontend to VM3') {
-        //     steps {
-        //         sh """
-        //         docker save ${FRONTEND_IMAGE} | ssh ${VM3_USER}@${VM3_IP} 'docker load'
-        //         ssh ${VM3_USER}@${VM3_IP} 'docker stop frontend-container || true && docker rm frontend-container || true'
-        //         ssh ${VM3_USER}@${VM3_IP} 'docker run -d -p 3000:3000 --name frontend-container ${FRONTEND_IMAGE}'
-        //         """
-        //     }
-        // }
+        stage('Deploy Frontend to VM3') {
+            steps {
+                sh """
+                docker save ${FRONTEND_IMAGE} | ssh ${VM3_USER}@${VM3_IP} 'docker load'
+                ssh ${VM3_USER}@${VM3_IP} 'docker stop frontend-container || true && docker rm frontend-container || true'
+                ssh ${VM3_USER}@${VM3_IP} 'docker run -d -p 3000:3000 --name frontend-container ${FRONTEND_IMAGE}'
+                """
+            }
+        }
     }
 
     post {
