@@ -15,13 +15,12 @@ pipeline {
     }
 
     stages {
-            stage('Start') {
-                steps {
-                    echo 'Pipeline execution started...'
-                }
+        stage('Start') {
+            steps {
+                echo 'Pipeline execution started...'
             }
+        }
 
-    stages {
         stage('Clone Repository') {
             steps {
                 git branch: 'main', url: 'https://github.com/Tom8797438/scan_ticket.git'
@@ -54,6 +53,7 @@ pipeline {
                 """
             }
         }
+
         stage('Cleanup Old Docker Images') {
             steps {
                 sh 'docker image prune -f'
@@ -89,5 +89,4 @@ pipeline {
             echo 'Build or Deployment Failed. Check the logs.'
         }
     }
-}
 }
