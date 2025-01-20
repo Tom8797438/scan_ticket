@@ -14,7 +14,7 @@ RUN npm install -g npm@latest && npm install
 COPY . .
 
 # Étape 6 : Copier le fichier .env (assurez-vous qu'il existe à la racine de votre projet)
-COPY ./src/.env /backend/.env
+COPY .env /backend/.env
 
 
 # Étape 7 : Assurer que les répertoires nécessaires existent et ont les bonnes permissions
