@@ -70,9 +70,9 @@ pipeline {
         stage('Deploy Backend to VM2') {
             steps {
                 sh """
-                docker save ${BACKEND_IMAGE} | ssh ${VM2_USER}@${VM2_IP} 'docker load'
-                ssh ${VM2_USER}@${VM2_IP} 'docker stop backend-container || true && docker rm backend-container || true'
-                ssh ${VM2_USER}@${VM2_IP} 'docker run -d -p 1337:1337 --name backend-container ${BACKEND_IMAGE}'
+                docker save ${BACKEND_IMAGE} | ssh -o StrictHostKeyChecking=no ${VM2_USER}@${VM2_IP} 'docker load'
+                ssh -o StrictHostKeyChecking=no ${VM2_USER}@${VM2_IP} 'docker stop backend-container || true && docker rm backend-container || true'
+                ssh -o StrictHostKeyChecking=no ${VM2_USER}@${VM2_IP} 'docker run -d -p 1337:1337 --name backend-container ${BACKEND_IMAGE}'
                 """
             }
         }
