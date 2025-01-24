@@ -82,7 +82,7 @@ pipeline {
                 sh """
                 docker save ${FRONTEND_IMAGE} | ssh -o StrictHostKeyChecking=no ${VM3_USER}@${VM3_IP} 'docker load'
                 ssh -o StrictHostKeyChecking=no ${VM3_USER}@${VM3_IP} 'docker stop frontend-container || true && docker rm frontend-container || true'
-                ssh -o StrictHostKeyChecking=no ${VM3_USER}@${VM3_IP} 'docker run -d -p 80:80 --name frontend-container ${FRONTEND_IMAGE}'
+                ssh -o StrictHostKeyChecking=no ${VM3_USER}@${VM3_IP} 'docker run -d -p 8080:8080 --name frontend-container ${FRONTEND_IMAGE}'
                 """
             }
         }
