@@ -24,6 +24,10 @@ FROM nginx:latest
 # Copier les fichiers construits dans le répertoire Nginx par défaut
 COPY --from=build /app/dist /usr/share/nginx/html
 
+# A tester
+# Modifier la configuration de Nginx pour écouter sur le port 8080
+RUN sed -i 's/listen       80;/listen 8080;/g' /etc/nginx/conf.d/default.conf
+
 # Exposer le port 80
 EXPOSE 8080
 
