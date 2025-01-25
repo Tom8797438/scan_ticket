@@ -72,7 +72,7 @@ export const useAuthStore = defineStore('authStore', {
           axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
     
           // Optionnel : Récupérer les informations utilisateur depuis Strapi
-          const response = await axios.get('http://localhost:1337/api/users/me');
+          const response = await axios.get('http://192.168.1.35:1337/api/users/me');
           this.user = response.data;
         } catch (err) {
           console.warn('Auto-login échoué. Token invalide ou expiré.', err);

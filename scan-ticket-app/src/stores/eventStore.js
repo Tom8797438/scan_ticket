@@ -21,7 +21,7 @@ export const useEventStore = defineStore('eventStore', {
         try {
           this.loading = true;
           const response = await axios.get(
-            'http://localhost:1337/api/events');
+            'http://192.168.1.35:1337/api/events');
           this.events = response.data.data;
         } catch (err) {
           this.error = 'Failed to fetch events. Please try again later.';
@@ -34,7 +34,7 @@ export const useEventStore = defineStore('eventStore', {
           
           this.loading = true;
           const response = await axios.post(
-            'http://localhost:1337/api/events',
+            'http://192.168.1.35:1337/api/events',
             { data: eventData }
           );
           console.log('createEvent : ',eventData)
@@ -55,7 +55,7 @@ export const useEventStore = defineStore('eventStore', {
       console.log('Recherche de l\'événement avec documentId :', documentId);
       this.loading = true;
       const response = await axios.get(
-        `http://localhost:1337/api/authors/:${documentId}`
+        `http://192.168.1.35:1337/api/authors/:${documentId}`
       );
       console.log('Données reçues :', response);
       if (response.data.data.length > 0) {

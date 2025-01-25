@@ -23,7 +23,7 @@ export const useScanStore = defineStore("scanStore", {
         // Récupérer le ticket via le documentId
         console.log(`Requête vers l'API pour récupérer le ticket avec documentId : ${documentId}`);
         const response = await axios.get(
-          `http://localhost:1337/api/tickets?filters[documentId][$eq]=${documentId}`
+          `http://192.168.1.35:1337/api/tickets?filters[documentId][$eq]=${documentId}`
         );
         console.log("Réponse API :", response);
 
@@ -56,7 +56,7 @@ export const useScanStore = defineStore("scanStore", {
 
         // Mettre à jour le statut en "scanné"
         console.log(`Mise à jour du statut du ticket avec documentId : ${documentId} en "scanned"`);
-        await axios.put(`http://localhost:1337/api/tickets/${ticket.documentId}`, {
+        await axios.put(`http://192.168.1.35:1337/api/tickets/${ticket.documentId}`, {
           data: { statu: "scanned" },
         });
 
