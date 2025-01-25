@@ -21,17 +21,8 @@ RUN npm run build
 # Utiliser une image Nginx pour servir les fichiers statiques
 FROM nginx:latest
 
-# Définir le répertoire de travail pour Nginx
-WORKDIR /usr/share/nginx/html
-
-# Copier la configuration Nginx personnalisée
-COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
-
-# Copier les fichiers construits depuis la phase précédente
-COPY --from=build /app/dist ./
-
 # Copier les fichiers construits dans le répertoire Nginx par défaut
-#COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
 
 # Exposer le port 80
 EXPOSE 8080
