@@ -1,0 +1,19 @@
+stages:
+  - test
+  - build
+  - deploy
+
+test:
+  stage: test
+  script:
+    - echo "Exécution des tests..."
+
+build:
+  stage: build
+  script:
+    - echo "Compilation du projet..."
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Déploiement de l'application..."
