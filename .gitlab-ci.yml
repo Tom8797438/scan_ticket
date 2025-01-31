@@ -6,14 +6,14 @@ stages:
 test:
   stage: test
   script:
-    - echo "Lancement des tests unitaires..."
+    - echo "✅ Lancement des tests unitaires..."
 
 build:
   stage: build
   script:
-    - docker-compose build
+    - curl -X POST "http://192.168.1.25:8090/job/Déploiement%20Scan-Ticket/build?token=DEPLOY_TOKEN"
 
 deploy:
   stage: deploy
   script:
-    - docker-compose up -d
+    - echo "🚀 Déploiement terminé sur le Raspberry !"
