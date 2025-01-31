@@ -6,14 +6,14 @@ stages:
 test:
   stage: test
   script:
-    - echo "Exécution des tests..."
+    - echo "Lancement des tests unitaires..."
 
 build:
   stage: build
   script:
-    - echo "Compilation du projet..."
+    - docker-compose build
 
 deploy:
   stage: deploy
   script:
-    - echo "Déploiement de l'application..."
+    - docker-compose up -d

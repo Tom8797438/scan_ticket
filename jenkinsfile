@@ -2,98 +2,63 @@ pipeline {
     agent any
 
     environment {
-        FRONTEND_DIR = 'scan-ticket-app'
-        BACKEND_DIR = 'src'
         FRONTEND_IMAGE = 'scan-ticket-frontend'
         BACKEND_IMAGE = 'scan-ticket-backend'
-        VM1_IP = "192.168.1.25"
-        VM2_IP = "192.168.1.35"
-        VM3_IP = "192.168.1.40"
-        VM1_USER = "tom"
-        VM2_USER = "thomas"
-        VM3_USER = "thomasfrontend"
+        RASPBERRY_USER = 'webserveur'
+        RASPBERRY_HOST = '192.168.1.18'
+        RASPBERRY_APP_PATH = "/home/webserveur/app"
     }
 
     stages {
-        stage('Start') {
-            steps {
-                echo 'Pipeline execution started...'
-            }
-        }
-
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/Tom8797438/scan_ticket.git'
-            }
-        }
-
-        stage('Cleanup Before Build') {
-            steps {
-                sh 'docker system prune -af'
+                git branch: 'main', url: 'https://gitlab.com/monutilisateur/monprojet.git'
             }
         }
 
         stage('Build Docker Images') {
             parallel {
-                stage('Build Frontend Docker Image') {
+                stage('Build Frontend') {
                     steps {
-                        sh """
-                        docker build -t ${FRONTEND_IMAGE} -f ${FRONTEND_DIR}/dockerfile ${FRONTEND_DIR}
-                        """
+                        sh "docker build -t ${FRONTEND_IMAGE} -f frontend/Dockerfile frontend"
                     }
                 }
 
-                stage('Build Backend Docker Image') {
+                stage('Build Backend') {
                     steps {
-                        sh """
-                        docker build -t ${BACKEND_IMAGE} -f ${BACKEND_DIR}/dockerfile .
-                        """
+                        sh "docker build -t ${BACKEND_IMAGE} -f backend/Dockerfile backend"
                     }
                 }
             }
         }
 
-        stage('Test SSH Connection to VM2') {
+        stage('Push Images to Raspberry') {
             steps {
                 sh """
-                ssh -o BatchMode=yes -o ConnectTimeout=5 ${VM2_USER}@${VM2_IP} 'echo Connection Successful' || echo 'SSH connection to VM2 failed'
+                docker save ${FRONTEND_IMAGE} > frontend.tar
+                docker save ${BACKEND_IMAGE} > backend.tar
+                scp frontend.tar backend.tar ${RASPBERRY_USER}@${RASPBERRY_HOST}:${RASPBERRY_APP_PATH}/
                 """
             }
         }
 
-        stage('Cleanup Old Docker Images') {
-            steps {
-                sh 'docker image prune -f'
-            }
-        }
-
-        stage('Deploy Backend to VM2') {
+        stage('Deploy on Raspberry') {
             steps {
                 sh """
-                docker save ${BACKEND_IMAGE} | ssh -o StrictHostKeyChecking=no ${VM2_USER}@${VM2_IP} 'docker load'
-                ssh -o StrictHostKeyChecking=no ${VM2_USER}@${VM2_IP} 'docker stop backend-container || true && docker rm backend-container || true'
-                ssh -o StrictHostKeyChecking=no ${VM2_USER}@${VM2_IP} 'docker run -d -p 1337:1337 --name backend-container ${BACKEND_IMAGE}'
+                ssh ${RASPBERRY_USER}@${RASPBERRY_HOST} 'docker load -i ${RASPBERRY_APP_PATH}/frontend.tar'
+                ssh ${RASPBERRY_USER}@${RASPBERRY_HOST} 'docker load -i ${RASPBERRY_APP_PATH}/backend.tar'
+                ssh ${RASPBERRY_USER}@${RASPBERRY_HOST} 'cd ${RASPBERRY_APP_PATH} && docker-compose up -d'
                 """
             }
         }
-
-        stage('Deploy Frontend to VM3') {
-            steps {
-                sh """
-                docker save ${FRONTEND_IMAGE} | ssh -o StrictHostKeyChecking=no ${VM3_USER}@${VM3_IP} 'docker load'
-                ssh -o StrictHostKeyChecking=no ${VM3_USER}@${VM3_IP} 'docker stop frontend-container || true && docker rm frontend-container || true'
-                ssh -o StrictHostKeyChecking=no ${VM3_USER}@${VM3_IP} 'docker run -d -p 8080:8080 --name frontend-container ${FRONTEND_IMAGE}'
-                """
-            }
-        }
-    } // <-- cette accolade ferme bien la section stages
+    }
 
     post {
         success {
-            echo 'Build and Deployment Successful!'
+            echo '🚀 Déploiement réussi sur le Raspberry Pi !'
         }
         failure {
-            echo 'Build or Deployment Failed. Check the logs.'
+            echo '❌ Échec du déploiement, vérifie les logs.'
         }
     }
 }
