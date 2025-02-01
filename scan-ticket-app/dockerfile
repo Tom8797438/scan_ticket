@@ -26,7 +26,7 @@ RUN npm run build
 FROM nginx:latest
 
 # Copier les fichiers construits dans le répertoire Nginx par défaut
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /src/dist /usr/share/nginx/html
 
 # Exposer directement le port 8080
 EXPOSE 8080
