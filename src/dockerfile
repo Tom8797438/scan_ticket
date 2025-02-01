@@ -2,7 +2,7 @@
 FROM node:20
 
 # Étape 2 : Définir le répertoire de travail dans le conteneur
-WORKDIR /app
+WORKDIR /src
 
 # Étape 3 : Copier uniquement les fichiers package.json pour installer les dépendances
 COPY package*.json ./
