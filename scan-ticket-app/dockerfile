@@ -4,7 +4,7 @@ FROM node:20 AS build
 # Définir le répertoire de travail
 WORKDIR /src
 
-RUN ls -la && cat package.json
+#RUN ls -la && cat package.json
 
 # Copier uniquement les fichiers package.json et package-lock.json pour optimiser le cache
 COPY scan-ticket-app/package*.json ./
