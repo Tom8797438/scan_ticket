@@ -4,6 +4,8 @@ FROM node:20 AS build
 # Définir le répertoire de travail
 WORKDIR /src
 
+RUN ls -la && cat package.json
+
 # Copier uniquement les fichiers package.json et package-lock.json pour optimiser le cache
 COPY scan-ticket-app/package*.json ./
 
@@ -14,7 +16,7 @@ RUN ls -la
 RUN npm install
 
 # Copier tout le code source
-COPY scan-ticket-app/. .
+COPY . /app
 
 # Construire l'application
 RUN npm run build
