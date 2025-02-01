@@ -26,7 +26,7 @@ pipeline {
 
                 stage('Build Backend') {
                     steps {
-                        sh "docker build -t ${BACKEND_IMAGE} -f src/dockerfile src"
+                        sh "docker build -t ${BACKEND_IMAGE} -f src/dockerfile"
                     }
                 }
             }
