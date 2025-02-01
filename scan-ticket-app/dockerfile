@@ -5,13 +5,16 @@ FROM node:20 AS build
 WORKDIR /src
 
 # Copier uniquement les fichiers package.json et package-lock.json pour optimiser le cache
-COPY package*.json ./
+COPY scan-ticket-app/package*.json ./
+
+# Vérifie les fichiers copiés
+RUN ls -la
 
 # Installer les dépendances
 RUN npm install
 
 # Copier tout le code source
-COPY . .
+COPY scan-ticket-app/. .
 
 # Construire l'application
 RUN npm run build

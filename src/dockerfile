@@ -5,7 +5,7 @@ FROM node:20
 WORKDIR /src
 
 # Étape 3 : Copier uniquement les fichiers package.json pour installer les dépendances
-COPY package*.json ./
+COPY package.json package-lock.json ./
 
 # Vérifie les fichiers copiés
 RUN ls -la
