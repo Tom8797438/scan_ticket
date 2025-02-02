@@ -38,10 +38,11 @@ pipeline {
                 docker save ${FRONTEND_IMAGE} > frontend.tar
                 docker save ${BACKEND_IMAGE} > backend.tar
                 ssh-keyscan -H ${RASPBERRY_HOST} >> ~/.ssh/known_hosts
-                scp -i /root/.ssh/id_rsa frontend.tar backend.tar ${RASPBERRY_USER}@${RASPBERRY_HOST}:${RASPBERRY_APP_PATH}/
+                scp frontend.tar backend.tar docker-compose.yml ${RASPBERRY_USER}@${RASPBERRY_HOST}:${RASPBERRY_APP_PATH}/
                 """
             }
         }
+
 
         stage('Deploy on Raspberry') {
             steps {
