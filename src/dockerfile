@@ -14,7 +14,7 @@ RUN ls -la
 RUN npm install
 
 # Étape 5 : Copier tout le code du projet dans le conteneur
-COPY src/. .
+COPY . .
 
 # Étape 6 : Définir les variables d’environnement (si nécessaire)
 ENV NODE_ENV=production

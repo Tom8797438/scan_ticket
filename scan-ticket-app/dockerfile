@@ -16,7 +16,7 @@ RUN ls -la
 RUN npm install
 
 # Copier tout le code source
-COPY scan-ticket-app /src
+COPY  . .
 
 
 # Construire l'application
