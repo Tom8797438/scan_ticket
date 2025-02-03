@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', credentialsId: 'gitlab-token', url: 'https://gitlab.com/Tom8797438/scan_ticket.git'
+                git branch: 'main', credentialsId: 'gitlab-ci-token', url: 'https://gitlab.com/Tom8797438/scan_ticket.git'
             }
         }
 
