@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'contrôleur' } 
+    agent any
 
     environment {
         IMAGE_BACKEND = "tyzer/backend"
