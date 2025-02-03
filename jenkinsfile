@@ -4,7 +4,9 @@ pipeline {
     environment {
         IMAGE_BACKEND = "tyzer/backend"
         IMAGE_FRONTEND = "tyzer/frontend"
+        REGISTRY_URL = "tyzer.top:5000"
         DEPLOY_SERVER = "user@tyzer.top"
+        CREDENTIALS_ID = "docker-credentials"
     }
 
     stages {
@@ -17,20 +19,27 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
-                    sh "docker build -t $IMAGE_BACKEND backend/"
-                    sh "docker build -t $IMAGE_FRONTEND frontend/"
-                    sh "docker tag $IMAGE_BACKEND tyzer.top:5000/backend"
-                    sh "docker tag $IMAGE_FRONTEND tyzer.top:5000/frontend"
+                    sh """
+                    docker build -t $IMAGE_BACKEND backend/
+                    docker build -t $IMAGE_FRONTEND frontend/
+                    docker tag $IMAGE_BACKEND $REGISTRY_URL/backend
+                    docker tag $IMAGE_FRONTEND $REGISTRY_URL/frontend
+                    """
                 }
             }
         }
 
-        stage('Push Images to tyzer.top') {
+        stage('Push Images to Registry') {
             steps {
                 script {
-                    sh "docker login tyzer.top:5000 -u docker -p PASSWORD" // Ajoute un mot de passe sécurisé
-                    sh "docker push tyzer.top:5000/backend"
-                    sh "docker push tyzer.top:5000/frontend"
+                    withCredentials([usernamePassword(credentialsId: CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh """
+                        docker login $REGISTRY_URL -u $DOCKER_USER -p $DOCKER_PASS
+                        docker push $REGISTRY_URL/backend
+                        docker push $REGISTRY_URL/frontend
+                        docker logout $REGISTRY_URL
+                        """
+                    }
                 }
             }
         }
@@ -40,9 +49,12 @@ pipeline {
                 script {
                     sh """
                     ssh -o StrictHostKeyChecking=no $DEPLOY_SERVER '
-                        docker pull tyzer.top:5000/backend &&
-                        docker pull tyzer.top:5000/frontend &&
-                        docker-compose -f /path/to/docker-compose.yml up -d
+                        docker login $REGISTRY_URL -u $DOCKER_USER -p $DOCKER_PASS &&
+                        cd /path/to/deployment &&
+                        docker-compose pull &&
+                        docker-compose up --force-recreate -d &&
+                        docker logout $REGISTRY_URL &&
+                        sudo systemctl restart nginx
                     '
                     """
                 }
@@ -52,7 +64,7 @@ pipeline {
 
     post {
         success {
-            echo '🚀 Déploiement réussi sur le Raspberry Pi !'
+            echo '🚀 Déploiement réussi sur https://tyzer.top !'
         }
         failure {
             echo '❌ Échec du déploiement, vérifie les logs.'
