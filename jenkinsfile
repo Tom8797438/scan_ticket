@@ -12,7 +12,9 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', credentialsId: 'gitlab-ci-token', url: 'https://gitlab.com/Tom8797438/scan_ticket.git'
+                withCredentials([usernamePassword(credentialsId: 'DEPLOY_TOKEN', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                    git branch: 'main', url: "https://$GIT_USER:$GIT_PASS@gitlab.com/Tom8797438/scan_ticket.git"
+                }
             }
         }
 
@@ -32,7 +34,7 @@ pipeline {
         stage('Push Images to Registry') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: CREDENTIALS_ID, usernameVariable: 'gitlab-ci-token', passwordVariable: 'DOCKER_PASS')]) {
+                    withCredentials([usernamePassword(credentialsId: 'DEPLOY_TOKEN', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh """
                         docker login $REGISTRY_URL -u $DOCKER_USER -p $DOCKER_PASS
                         docker push $REGISTRY_URL/backend
@@ -47,16 +49,18 @@ pipeline {
         stage('Deploy on tyzer.top') {
             steps {
                 script {
-                    sh """
-                    ssh -o StrictHostKeyChecking=no $DEPLOY_SERVER '
-                        docker login $REGISTRY_URL -u $DOCKER_USER -p $DOCKER_PASS &&
-                        cd /path/to/deployment &&
-                        docker-compose pull &&
-                        docker-compose up --force-recreate -d &&
-                        docker logout $REGISTRY_URL &&
-                        sudo systemctl restart nginx
-                    '
-                    """
+                    withCredentials([usernamePassword(credentialsId: 'DEPLOY_TOKEN', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh """
+                        ssh -o StrictHostKeyChecking=no $DEPLOY_SERVER << 'EOF'
+                            docker login $REGISTRY_URL -u $DOCKER_USER -p $DOCKER_PASS
+                            cd /path/to/deployment
+                            docker-compose pull
+                            docker-compose up --force-recreate -d
+                            docker logout $REGISTRY_URL
+                            sudo systemctl restart nginx
+                        EOF
+                        """
+                    }
                 }
             }
         }
