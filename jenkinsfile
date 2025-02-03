@@ -32,7 +32,7 @@ pipeline {
         stage('Push Images to Registry') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: CREDENTIALS_ID, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    withCredentials([usernamePassword(credentialsId: CREDENTIALS_ID:'DEPLOY_TOKEN', usernameVariable: 'gitlab-ci-token', passwordVariable: 'DOCKER_PASS')]) {
                         sh """
                         docker login $REGISTRY_URL -u $DOCKER_USER -p $DOCKER_PASS
                         docker push $REGISTRY_URL/backend
