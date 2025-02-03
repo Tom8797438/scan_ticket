@@ -2,11 +2,9 @@ pipeline {
     agent any
 
     environment {
-        FRONTEND_IMAGE = 'scan-ticket-frontend'
-        BACKEND_IMAGE = 'scan-ticket-backend'
-        RASPBERRY_USER = 'webserveur'
-        RASPBERRY_HOST = '192.168.1.18'
-        RASPBERRY_APP_PATH = "/home/webserveur/app"
+        IMAGE_BACKEND = "tyzer/backend"
+        IMAGE_FRONTEND = "tyzer/frontend"
+        DEPLOY_SERVER = "user@tyzer.top"
     }
 
     stages {
@@ -17,40 +15,37 @@ pipeline {
         }
 
         stage('Build Docker Images') {
-            parallel {
-                stage('Build Backend') {
-                    steps {
-                        sh "docker build -t ${BACKEND_IMAGE} -f src/dockerfile ."
-                    }
-                }
-
-                stage('Build Frontend') {
-                    steps {
-                        sh "docker build --no-cache -t ${FRONTEND_IMAGE} -f ./scan-ticket-app/dockerfile ."
-                    }
+            steps {
+                script {
+                    sh "docker build -t $IMAGE_BACKEND backend/"
+                    sh "docker build -t $IMAGE_FRONTEND frontend/"
+                    sh "docker tag $IMAGE_BACKEND tyzer.top:5000/backend"
+                    sh "docker tag $IMAGE_FRONTEND tyzer.top:5000/frontend"
                 }
             }
         }
 
-        stage('Push Images to Raspberry') {
+        stage('Push Images to tyzer.top') {
             steps {
-                sh """
-                docker save ${FRONTEND_IMAGE} > frontend.tar
-                docker save ${BACKEND_IMAGE} > backend.tar
-                ssh-keyscan -H ${RASPBERRY_HOST} >> ~/.ssh/known_hosts
-                scp frontend.tar backend.tar docker-compose.yml ${RASPBERRY_USER}@${RASPBERRY_HOST}:${RASPBERRY_APP_PATH}/
-                """
+                script {
+                    sh "docker login tyzer.top:5000 -u docker -p PASSWORD" // Ajoute un mot de passe sécurisé
+                    sh "docker push tyzer.top:5000/backend"
+                    sh "docker push tyzer.top:5000/frontend"
+                }
             }
         }
 
-
-        stage('Deploy on Raspberry') {
+        stage('Deploy on tyzer.top') {
             steps {
-                sh """
-                ssh ${RASPBERRY_USER}@${RASPBERRY_HOST} 'docker load -i ${RASPBERRY_APP_PATH}/frontend.tar'
-                ssh ${RASPBERRY_USER}@${RASPBERRY_HOST} 'docker load -i ${RASPBERRY_APP_PATH}/backend.tar'
-                ssh ${RASPBERRY_USER}@${RASPBERRY_HOST} 'cd ${RASPBERRY_APP_PATH} && docker-compose up -d'
-                """
+                script {
+                    sh """
+                    ssh -o StrictHostKeyChecking=no $DEPLOY_SERVER '
+                        docker pull tyzer.top:5000/backend &&
+                        docker pull tyzer.top:5000/frontend &&
+                        docker-compose -f /path/to/docker-compose.yml up -d
+                    '
+                    """
+                }
             }
         }
     }
