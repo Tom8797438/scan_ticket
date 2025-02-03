@@ -1,19 +1,21 @@
 pipeline {
-    agent any
+    agent { label 'agent-raspberry' }  // Utilisation de l'agent Raspberry
 
     environment {
         IMAGE_BACKEND = "tyzer/backend"
         IMAGE_FRONTEND = "tyzer/frontend"
         REGISTRY_URL = "tyzer.top:5000"
-        DEPLOY_SERVER = "user@tyzer.top"
-        CREDENTIALS_ID = "DEPLOY_TOKEN"
+        DEPLOY_SERVER = "jenkins@tyzer.top"  // Jenkins en SSH
+        WORKSPACE_PATH = "/mnt/disque1/jenkins/agent/workspace"  // Emplacement du workspace
     }
 
     stages {
         stage('Clone Repository') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'DEPLOY_TOKEN', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
-                    git branch: 'main', url: "https://$GIT_USER:$GIT_PASS@gitlab.com/Tom8797438/scan_ticket.git"
+                    dir("${WORKSPACE_PATH}/scan_ticket") {  // Définit le workspace pour éviter les conflits
+                        git branch: 'main', url: "https://$GIT_USER:$GIT_PASS@gitlab.com/Tom8797438/scan_ticket.git"
+                    }
                 }
             }
         }
@@ -22,6 +24,7 @@ pipeline {
             steps {
                 script {
                     sh """
+                    cd ${WORKSPACE_PATH}/scan_ticket
                     docker build -t $IMAGE_BACKEND backend/
                     docker build -t $IMAGE_FRONTEND frontend/
                     docker tag $IMAGE_BACKEND $REGISTRY_URL/backend
@@ -46,14 +49,14 @@ pipeline {
             }
         }
 
-        stage('Deploy on tyzer.top') {
+        stage('Deploy on Raspberry Pi (tyzer.top)') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'DEPLOY_TOKEN', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ssh-jenkins', keyFileVariable: 'SSH_KEY')]) {
                         sh """
-                        ssh -o StrictHostKeyChecking=no $DEPLOY_SERVER << 'EOF'
+                        ssh -i $SSH_KEY -o StrictHostKeyChecking=no $DEPLOY_SERVER << 'EOF'
                             docker login $REGISTRY_URL -u $DOCKER_USER -p $DOCKER_PASS
-                            cd /path/to/deployment
+                            cd /mnt/disque1/jenkins/deployment
                             docker-compose pull
                             docker-compose up --force-recreate -d
                             docker logout $REGISTRY_URL
