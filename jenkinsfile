@@ -6,7 +6,7 @@ pipeline {
         IMAGE_FRONTEND = "tyzer/frontend"
         REGISTRY_URL = "tyzer.top:5000"
         DEPLOY_SERVER = "user@tyzer.top"
-        CREDENTIALS_ID = "docker-credentials"
+        CREDENTIALS_ID = "DEPLOY_TOKEN"
     }
 
     stages {
@@ -32,7 +32,7 @@ pipeline {
         stage('Push Images to Registry') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: CREDENTIALS_ID:'DEPLOY_TOKEN', usernameVariable: 'gitlab-ci-token', passwordVariable: 'DOCKER_PASS')]) {
+                    withCredentials([usernamePassword(credentialsId: CREDENTIALS_ID, usernameVariable: 'gitlab-ci-token', passwordVariable: 'DOCKER_PASS')]) {
                         sh """
                         docker login $REGISTRY_URL -u $DOCKER_USER -p $DOCKER_PASS
                         docker push $REGISTRY_URL/backend
