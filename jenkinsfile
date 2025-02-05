@@ -5,15 +5,18 @@ pipeline {
         IMAGE_BACKEND = "tyzer/backend"
         IMAGE_FRONTEND = "tyzer/frontend"
         REGISTRY_URL = "tyzer.top:5000"
-        WORKSPACE_PATH = "/mnt/disque1/jenkins/agent/workspace"
+        WORKSPACE_PATH = "/mnt/externe/jenkins/agent/workspace"
         FRONTEND_API_URL = "https://tyzer.top/api"  // Corrige l'URL de l'API
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                dir("${WORKSPACE_PATH}/scan_ticket") {
-                    git branch: 'main', url: "https://gitlab.com/Tom8797438/scan_ticket.git"
+                script {
+                    echo "📥 Clonage du dépôt GitLab..."
+                    dir("${WORKSPACE_PATH}/scan_ticket") {
+                        git branch: 'main', url: "https://gitlab.com/Tom8797438/scan_ticket.git"
+                    }
                 }
             }
         }
@@ -22,9 +25,13 @@ pipeline {
             steps {
                 script {
                     sh """
-                    cd ${WORKSPACE_PATH}/scan_ticket/scan-ticket-app
-                    echo "Remplacement de l'URL API..."
-                    sed -i 's|http://localhost:1337/api|$FRONTEND_API_URL|g' src/config.js
+                    if [ -d "${WORKSPACE_PATH}/scan_ticket/scan-ticket-app/src" ]; then
+                        echo "🔧 Mise à jour de l'URL API..."
+                        sed -i 's|http://localhost:1337/api|$FRONTEND_API_URL|g' ${WORKSPACE_PATH}/scan_ticket/scan-ticket-app/src/config.js
+                    else
+                        echo "⚠️ Dossier scan-ticket-app introuvable ! Vérifie le dépôt."
+                        exit 1
+                    fi
                     """
                 }
             }
@@ -34,9 +41,11 @@ pipeline {
             steps {
                 script {
                     sh """
+                    echo "🐳 Construction des images Docker..."
                     cd ${WORKSPACE_PATH}/scan_ticket
                     docker build -t $IMAGE_BACKEND .
-                    docker build -t $IMAGE_FRONTEND scan-ticket-app/
+                    cd scan-ticket-app
+                    docker build -t $IMAGE_FRONTEND .
                     docker tag $IMAGE_BACKEND $REGISTRY_URL/backend
                     docker tag $IMAGE_FRONTEND $REGISTRY_URL/frontend
                     """
@@ -48,6 +57,7 @@ pipeline {
             steps {
                 script {
                     sh """
+                    echo "🚀 Push des images Docker sur le registre..."
                     docker push $REGISTRY_URL/backend
                     docker push $REGISTRY_URL/frontend
                     """
@@ -59,7 +69,8 @@ pipeline {
             steps {
                 script {
                     sh """
-                    cd /mnt/disque1/jenkins/deployment
+                    echo "📦 Déploiement des conteneurs avec Docker Compose..."
+                    cd /mnt/externe/jenkins/deployment
                     docker-compose pull
                     docker-compose up --force-recreate -d
                     sudo systemctl restart nginx
@@ -71,7 +82,7 @@ pipeline {
 
     post {
         success {
-            echo '🚀 Déploiement réussi sur https://tyzer.top !'
+            echo '✅ Déploiement réussi sur https://tyzer.top !'
         }
         failure {
             echo '❌ Échec du déploiement, vérifie les logs.'
