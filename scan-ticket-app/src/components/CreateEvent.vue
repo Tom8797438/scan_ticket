@@ -1,10 +1,7 @@
 <template>
     <h1 class="title">Créer un Évènement</h1>
-
       <div class="create-event-container">
-        
         <!-- Formulaire de création d'évènement -->
-
         <form @submit.prevent="createEvent">
           <div class="form-group">
             <label for="name">Evènement</label>
@@ -78,8 +75,11 @@
         </form>
     
         <!-- Message de statut -->
-        <p v-if="success" class="success">well done !</p>
-        <p v-if="error" class="error">{{ error }}</p>
+        <p v-if="success" class="success">well done !
+        </p>
+        <p v-if="error" class="error">{{ error }}
+        </p>
+
       </div>
   </template>
   

@@ -4,20 +4,17 @@ FROM node:20 AS build
 # Définir le répertoire de travail
 WORKDIR /src
 
-#RUN ls -la && cat package.json
-
-# Copier uniquement les fichiers package.json et package-lock.json pour optimiser le cache
-COPY scan-ticket-app/package*.json ./
-
-# Vérifie les fichiers copiés
-RUN ls -la
+# Copier uniquement les fichiers package.json pour optimiser le cache
+COPY package.json package-lock.json ./
 
 # Installer les dépendances
 RUN npm install
 
-# Copier tout le code source
-COPY scan-ticket-app /src
+# Copier tout le code source du frontend
+COPY . .
 
+# Mettre à jour l'URL de l'API backend
+RUN sed -i 's|http://localhost:1337/api|https://tyzer.top/api|g' src/config.js
 
 # Construire l'application
 RUN npm run build
@@ -28,8 +25,8 @@ FROM nginx:latest
 # Copier les fichiers construits dans le répertoire Nginx par défaut
 COPY --from=build /src/dist /usr/share/nginx/html
 
-# Exposer directement le port 8080
-EXPOSE 8080
+# Exposer directement le port 80
+EXPOSE 80
 
 # Lancer Nginx
 CMD ["nginx", "-g", "daemon off;"]

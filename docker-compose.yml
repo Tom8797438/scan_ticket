@@ -2,39 +2,23 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend
+    image: tyzer/backend
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "1337:1337"
-    env_file: 
-      - .env  # Charge automatiquement le fichier .env
-    networks:
-      - mynetwork
-    depends_on:
-      - db
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
 
   frontend:
-    build: ./frontend
+    image: tyzer/frontend
+    build:
+      context: ./scan-ticket-app
+      dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "80:80"
     depends_on:
       - backend
-    env_file:
-      - .env
-    environment:
-      - VITE_API_URL=http://backend:1337
-    networks:
-      - mynetwork
-
-  db:
-    image: postgres:15
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: mydatabase
-    ports:
-      - "5432:5432"
-    networks:
-      - mynetwork
-
-networks:
-  mynetwork:
+    restart: unless-stopped

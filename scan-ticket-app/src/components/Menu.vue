@@ -95,26 +95,21 @@
   // Items du menu
   const menuItems = [
     {
-      label: 'Créer Évènement',
+      label: 'Nouveau',
       icon: 'fas fa-calendar-plus',
       action: () => {
         showCreateEvent.value = true;
       }
     },
-    // {
-    //   label: 'Acheter Billet',
-    //   icon: 'fas fa-ticket-alt',
-    //   action: () => alert('Acheter un billet'),
-    // },
     {
-      label: 'Scanner Billet',
+      label: 'Scanner',
       icon: 'fas fa-qrcode',
       action: () => {
         showQrCodeScanner.value = true;
       }
     },
     {
-      label: 'Voir Évènements',
+      label: 'Évènements',
       icon: 'fas fa-calendar',
       action: () => {
         showEventCard.value = true; // Affiche EventCard

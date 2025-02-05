@@ -36,7 +36,7 @@ export const useTicketStore = defineStore('ticketStore', {
 
         // Envoi de la requête pour créer un ticket
         const response = await axios.post(
-          `http://backend:1337/api/tickets`,
+          `http://localhost:1337/api/tickets`,
           { data: ticketPayload }
         );
         if (!response.data || !response.data.data) {

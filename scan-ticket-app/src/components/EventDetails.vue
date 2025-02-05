@@ -9,11 +9,12 @@
         <p><strong>Adresse :</strong> {{ selectedEvent.address || 'Non spécifié' }}</p>
         <p><strong>Ville :</strong> {{ selectedEvent.city || 'Non spécifié' }}</p>
         <p><strong>Places disponibles :</strong> {{ selectedEvent.total_seats || 'Non spécifié' }}</p>
-        <p><strong>Prix Standard :</strong> {{ selectedEvent.price_standard || 'Non spécifié' }} €</p>
-        <p><strong>Prix VIP :</strong> {{ selectedEvent.price_vip || 'Non spécifié' }} €</p>
-        <p><strong>Prix PMR :</strong> {{ selectedEvent.price_pmr || 'Non spécifié' }} €</p>
-        <p><strong>Prix Enfant -12 ans :</strong> {{ selectedEvent.price_children || 'Non spécifié' }} €</p>
-        <p><strong>Prix Étudiant :</strong> {{ selectedEvent.price_student || 'Non spécifié' }} €</p>
+        <p v-if="selectedEvent.price_standard"><strong>Prix Standard :</strong> {{ selectedEvent.price_standard }} €</p>
+        <p v-if="selectedEvent.price_vip"><strong>Prix VIP :</strong> {{ selectedEvent.price_vip }} €</p>
+        <p v-if="selectedEvent.price_pmr"><strong>Prix PMR :</strong> {{ selectedEvent.price_pmr }} €</p>
+        <p v-if="selectedEvent.price_children"><strong>Prix Enfant -12 ans :</strong> {{ selectedEvent.price_children }} €</p>
+        <p v-if="selectedEvent.price_student"><strong>Prix Étudiant :</strong> {{ selectedEvent.price_student }} €</p>
+
       </div>
 
       <!-- Colonne droite -->
@@ -80,13 +81,19 @@ export default {
     const phone = ref(''); // Téléphone de l'utilisateur
 
     // Définir dynamiquement les types de tickets en fonction de l'événement sélectionné
-    const ticketTypes = ref([
-      { name: 'standardTickets', label: 'Standard', price: eventStore.selectedEvent?.price_standard || 0, quantity: 0 },
-      { name: 'vipTickets', label: 'VIP', price: eventStore.selectedEvent?.price_vip || 0, quantity: 0 },
-      { name: 'pmrTickets', label: 'PMR', price: eventStore.selectedEvent?.price_pmr || 0, quantity: 0 },
-      { name: 'childrenTickets', label: 'Enfants', price: eventStore.selectedEvent?.price_children || 0, quantity: 0 },
-      { name: 'studentTickets', label: 'Étudiants', price: eventStore.selectedEvent?.price_student || 0, quantity: 0 },
-    ]);
+    const ticketTypes = computed(() => {
+    const allTickets = [
+      { name: 'standardTickets', label: 'Standard', price: eventStore.selectedEvent?.price_standard },
+      { name: 'vipTickets', label: 'VIP', price: eventStore.selectedEvent?.price_vip },
+      { name: 'pmrTickets', label: 'PMR', price: eventStore.selectedEvent?.price_pmr },
+      { name: 'childrenTickets', label: 'Enfants', price: eventStore.selectedEvent?.price_children },
+      { name: 'studentTickets', label: 'Étudiants', price: eventStore.selectedEvent?.price_student },
+    ];
+    return allTickets
+      .filter(ticket => ticket.price !== null && ticket.price !== undefined) // Filtrer ceux sans prix
+      .map(ticket => ({ ...ticket, quantity: 0 })); // Ajouter la quantité
+  });
+
 
     //const selectedEvent = computed(() => eventStore.selectedEvent);
 

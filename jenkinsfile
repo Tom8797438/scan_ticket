@@ -1,21 +1,31 @@
 pipeline {
-    agent { label 'agent-raspberry' }  // Utilisation de l'agent Raspberry
+    agent { label 'agent-raspberry' }
 
     environment {
         IMAGE_BACKEND = "tyzer/backend"
         IMAGE_FRONTEND = "tyzer/frontend"
         REGISTRY_URL = "tyzer.top:5000"
-        DEPLOY_SERVER = "jenkins@tyzer.top"  // Jenkins en SSH
-        WORKSPACE_PATH = "/mnt/disque1/jenkins/agent/workspace"  // Emplacement du workspace
+        WORKSPACE_PATH = "/mnt/disque1/jenkins/agent/workspace"
+        FRONTEND_API_URL = "https://tyzer.top/api"  // Corrige l'URL de l'API
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'DEPLOY_TOKEN', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
-                    dir("${WORKSPACE_PATH}/scan_ticket") {  // Définit le workspace pour éviter les conflits
-                        git branch: 'main', url: "https://$GIT_USER:$GIT_PASS@gitlab.com/Tom8797438/scan_ticket.git"
-                    }
+                dir("${WORKSPACE_PATH}/scan_ticket") {
+                    git branch: 'main', url: "https://gitlab.com/Tom8797438/scan_ticket.git"
+                }
+            }
+        }
+
+        stage('Update Frontend API URL') {
+            steps {
+                script {
+                    sh """
+                    cd ${WORKSPACE_PATH}/scan_ticket/scan-ticket-app
+                    echo "Remplacement de l'URL API..."
+                    sed -i 's|http://localhost:1337/api|$FRONTEND_API_URL|g' src/config.js
+                    """
                 }
             }
         }
@@ -25,8 +35,8 @@ pipeline {
                 script {
                     sh """
                     cd ${WORKSPACE_PATH}/scan_ticket
-                    docker build -t $IMAGE_BACKEND backend/
-                    docker build -t $IMAGE_FRONTEND frontend/
+                    docker build -t $IMAGE_BACKEND .
+                    docker build -t $IMAGE_FRONTEND scan-ticket-app/
                     docker tag $IMAGE_BACKEND $REGISTRY_URL/backend
                     docker tag $IMAGE_FRONTEND $REGISTRY_URL/frontend
                     """
@@ -37,33 +47,23 @@ pipeline {
         stage('Push Images to Registry') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'DEPLOY_TOKEN', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh """
-                        docker login $REGISTRY_URL -u $DOCKER_USER -p $DOCKER_PASS
-                        docker push $REGISTRY_URL/backend
-                        docker push $REGISTRY_URL/frontend
-                        docker logout $REGISTRY_URL
-                        """
-                    }
+                    sh """
+                    docker push $REGISTRY_URL/backend
+                    docker push $REGISTRY_URL/frontend
+                    """
                 }
             }
         }
 
-        stage('Deploy on Raspberry Pi (tyzer.top)') {
+        stage('Deploy on Raspberry Pi') {
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'ssh-jenkins', keyFileVariable: 'SSH_KEY')]) {
-                        sh """
-                        ssh -i $SSH_KEY -o StrictHostKeyChecking=no $DEPLOY_SERVER << 'EOF'
-                            docker login $REGISTRY_URL -u $DOCKER_USER -p $DOCKER_PASS
-                            cd /mnt/disque1/jenkins/deployment
-                            docker-compose pull
-                            docker-compose up --force-recreate -d
-                            docker logout $REGISTRY_URL
-                            sudo systemctl restart nginx
-                        EOF
-                        """
-                    }
+                    sh """
+                    cd /mnt/disque1/jenkins/deployment
+                    docker-compose pull
+                    docker-compose up --force-recreate -d
+                    sudo systemctl restart nginx
+                    """
                 }
             }
         }

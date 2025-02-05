@@ -24,36 +24,46 @@
         </select>
       </p>
 
-     <!-- <p class="decode-result">
-         Dernier résultat : <b>{{ result }}</b> 
-      </p>-->
-
       <!-- Mise à jour : Utilisation de `status` -->
       <div class="scan-response" v-if="scanResponse">
+        <div class="status-icon" :class="statusClass">
+          <FontAwesomeIcon v-if="scanResponse.status === 'success'" :icon="['fas', 'thumbs-up']" class="success-icon"/>
+          <FontAwesomeIcon v-if="scanResponse.status === 'canceled'" :icon="['fas', 'exclamation-circle']" class="warning-icon"/>
+          <FontAwesomeIcon v-if="scanResponse.status === 'error'" :icon="['fas', 'times-circle']" class="error-icon"/>
+        </div>
+      <!-- <div v-if="scanResponse.status !== 'success'" class="fas fa-thumbs-up">
         <p><b>Statut du scan :</b> {{ scanResponse.status }}</p>
         <p v-if="scanResponse.status === 'success'">
           <b>Message :</b> Ticket valide, accès autorisé !
         </p>
-        <p v-if="scanResponse.status === 'canceled'">
+        <p v-if="scanResponse.status === 'canceled'" class="fas fa-exclamation-circle">
           <b>Message :</b> Ticket déjà scanné, accès refusé.
         </p>
-        <p v-if="scanResponse.status === 'error'">
+        <p v-if="scanResponse.status === 'error'" class="fas fa-times-circle">
           <b>Message :</b> Ticket invalide, vérifiez le QR code.
         </p>
         <p><b>Détails :</b> {{ scanResponse.message }}</p>
-      </div>
+      </div> -->
     </div>
   </div>
+</div>
 </template>
 
 <script>
 import { ref, computed } from "vue";
 import { QrcodeStream } from "vue-qrcode-reader";
 import { useScanStore } from "@/stores/scanStore.js";
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faThumbsUp, faExclamationCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import { library } from '@fortawesome/fontawesome-svg-core';
+
+library.add(faThumbsUp, faExclamationCircle, faTimesCircle);
+
 
 export default {
   components: {
     QrcodeStream,
+    FontAwesomeIcon,
   },
   setup() {
     const scanStore = useScanStore();
@@ -103,6 +113,20 @@ export default {
       { label: "Caméra arrière", constraints: { facingMode: "environment" } },
       { label: "Caméra avant", constraints: { facingMode: "user" } },
     ]);
+
+    const statusClass = computed(() => {
+    if (!scanResponse.value) return "";
+    switch (scanResponse.value.status) {
+      case "success":
+        return "success-icon";
+      case "canceled":
+        return "warning-icon";
+      case "error":
+        return "error-icon";
+      default:
+        return "";
+    }
+  });
 
     async function onCameraReady() {
       try {
