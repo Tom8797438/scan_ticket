@@ -15,7 +15,7 @@ pipeline {
                 script {
                     echo "📥 Clonage du dépôt GitLab..."
                     dir("${WORKSPACE_PATH}/scan_ticket") {
-                        git branch: 'main', url: "https://gitlab.com/Tom8797438/scan_ticket.git"
+                        git branch: 'main', url: "https://github.com/Tom8797438/scan_ticket.git"
                     }
                 }
             }
