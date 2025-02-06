@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'agent-raspberry' }
+    agent any
 
     environment {
         IMAGE_BACKEND = "tyzer/backend"
