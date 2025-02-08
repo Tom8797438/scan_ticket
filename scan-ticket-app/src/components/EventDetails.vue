@@ -155,6 +155,13 @@ export default {
         console.log("de bookTickets dans EventDetails.vue Tickets créés :", createdTickets);
 
         alert("Réservation réussie !");
+
+        // ✅ Réinitialiser le formulaire
+        resetForm();
+
+        // ✅ Redirection après réservation
+        goBackToEvents();
+
       } catch (error) {
         console.error("Erreur lors de la réservation :", error);
         alert("Une erreur est survenue lors de la réservation.");
@@ -167,6 +174,22 @@ export default {
       router.push('/Menu'); // Redirige vers le menu
     };
 
+    const resetForm = () => {
+    console.log("Réinitialisation du formulaire...");
+    
+    // Réinitialiser les champs utilisateur
+    firstname.value = "";
+    lastname.value = "";
+    email.value = "";
+    phone.value = "";
+
+    // Réinitialiser la quantité des tickets à 0
+    ticketTypes.value.forEach(ticket => {
+      ticket.quantity = 0;
+    });
+  };
+
+
     return {
       ticketTypes,
       selectedEvent,
@@ -178,6 +201,8 @@ export default {
       calculateTotal,
       bookTickets,
       goBackToEvents,
+      goBackToEvents,
+      resetForm,
     };
   },
 };

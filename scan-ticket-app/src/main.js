@@ -9,10 +9,10 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { QrcodeStream } from 'vue-qrcode-reader';
 
 // Importation des icônes gratuites de FontAwesome
-import { faCalendarPlus, faTicketAlt, faQrcode, faCalendar,faSignOutAlt  } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarPlus, faTicketAlt, faQrcode, faCalendar,faSignOutAlt,faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useAuthStore } from '@/stores/authStore';
 // Ajouter les icônes nécessaires à la bibliothèque
-library.add(faCalendarPlus, faTicketAlt, faQrcode, faCalendar, faSignOutAlt);
+library.add(faCalendarPlus, faTicketAlt, faQrcode, faCalendar, faSignOutAlt, faTrash);
 
 import App from './App.vue';
 import router from './router';

@@ -1,4 +1,5 @@
 <template>
+  <div class="card">
     <h1 class="title">Créer un Évènement</h1>
       <div class="create-event-container">
         <!-- Formulaire de création d'évènement -->
@@ -81,6 +82,7 @@
         </p>
 
       </div>
+    </div>
   </template>
   
   <script>

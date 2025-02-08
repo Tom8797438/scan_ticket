@@ -1,3 +1,9 @@
+.card{
+  background: linear-gradient(135deg, #6f45e285, #88d3ceab);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
 .title{
     color:#11379e;
 }
@@ -8,7 +14,7 @@
     margin: 2rem auto; /* Centrer avec un espace autour */
     padding: 2rem; /* Ajout d'espace intérieur */
     background: linear-gradient(135deg, #6e45e2, #88d3ce);
-    border: 1px solid #e0e0e0;
+    /* border: 1px solid #e0e0e0; */
     border-radius: 8px; /* Coins arrondis */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombre légère */
   }

@@ -29,7 +29,7 @@ export const useEventStore = defineStore('eventStore', {
           this.loading = false;
         }
       },
-      async createEvent(eventData) {
+    async createEvent(eventData) {
         try {
           
           this.loading = true;
@@ -48,7 +48,7 @@ export const useEventStore = defineStore('eventStore', {
         } finally {
           this.loading = false;
         }
-  },
+      },
 
   async fetchEventDetails(documentId) {
     try {
@@ -71,7 +71,33 @@ export const useEventStore = defineStore('eventStore', {
     } finally {
       this.loading = false;
     }
-  } 
+  },
+
+  // function delete event
+  async fetcheventdelete(documentId) {
+    try {
+      console.log('Suppression de l\'événement avec documentId :', documentId);
+      this.loading = true;
   
+      // ✅ Suppression avec `documentId`
+      const response = await axios.delete(`http://localhost:1337/api/events/${documentId}`);
+  
+      console.log('Réponse du serveur après suppression :', response);
+  
+      if (response.status === 200 || response.status === 204) {
+        console.log('Événement supprimé côté serveur.');
+  
+        // ✅ Supprimer l'événement de `this.events`
+        this.events = this.events.filter(event => event.documentId !== documentId);
+      } else {
+        console.warn("La requête DELETE n'a pas réussi, statut :", response.status);
+      }
+    } catch (err) {
+      console.error('Erreur lors de la suppression de l\'événement', err);
+      this.error = 'Impossible de supprimer l\'événement.';
+    } finally {
+      this.loading = false;
+    }
+  }  
 },
 });

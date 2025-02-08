@@ -1,5 +1,5 @@
 <template>
-  <div class="cadre-scan">
+  <div class="cadre-scan" :key="componentKey">
     <div class="camera-frame">
       <qrcode-stream
         :constraints="selectedConstraints"
@@ -27,24 +27,15 @@
       <!-- Mise à jour : Utilisation de `status` -->
       <div class="scan-response" v-if="scanResponse">
         <div class="status-icon" :class="statusClass">
+          <!-- <button @click="resetScanner" class="reset-button">Réinitialiser</button> -->
           <FontAwesomeIcon v-if="scanResponse.status === 'success'" :icon="['fas', 'thumbs-up']" class="success-icon"/>
-          <FontAwesomeIcon v-if="scanResponse.status === 'canceled'" :icon="['fas', 'exclamation-circle']" class="warning-icon"/>
+          <FontAwesomeIcon v-if="scanResponse.status === 'canceled'" :icon="['fas', 'thumbs-up']" class="warning-icon"/>
           <FontAwesomeIcon v-if="scanResponse.status === 'error'" :icon="['fas', 'times-circle']" class="error-icon"/>
+          
         </div>
-      <!-- <div v-if="scanResponse.status !== 'success'" class="fas fa-thumbs-up">
-        <p><b>Statut du scan :</b> {{ scanResponse.status }}</p>
-        <p v-if="scanResponse.status === 'success'">
-          <b>Message :</b> Ticket valide, accès autorisé !
-        </p>
-        <p v-if="scanResponse.status === 'canceled'" class="fas fa-exclamation-circle">
-          <b>Message :</b> Ticket déjà scanné, accès refusé.
-        </p>
-        <p v-if="scanResponse.status === 'error'" class="fas fa-times-circle">
-          <b>Message :</b> Ticket invalide, vérifiez le QR code.
-        </p>
-        <p><b>Détails :</b> {{ scanResponse.message }}</p>
-      </div> -->
+        
     </div>
+    
   </div>
 </div>
 </template>
@@ -69,30 +60,44 @@ export default {
     const scanStore = useScanStore();
     const result = ref(""); // Résultat brut du dernier scan
     const scanResponse = ref(null); // Réponse après validation
+    
+    const componentKey = ref(0);
+
+    function resetScanner() {
+  console.log("Réinitialisation du scanner...");
+  scanResponse.value = null;  // Effacer la réponse du scan
+  result.value = "";  // Effacer le dernier QR code scanné
+  componentKey.value += 1; // Force Vue à recréer le composant
+}
 
     // Fonction exécutée lors de la détection d'un QR code
     async function onDecode(decodedString) {
-      try {
-        console.log("QR Code brut détecté :", decodedString);
+  try {
+    console.log("QR Code brut détecté :", decodedString);
 
-        // Décoder le JSON du QR code
-        const parsedData = JSON.parse(decodedString);
-        console.log("Contenu décodé :", parsedData);
+    const parsedData = JSON.parse(decodedString);
+    console.log("Contenu décodé :", parsedData);
 
-        // Vérifiez si les clés nécessaires sont présentes
-        if (parsedData.documentId && parsedData.qr_code) {
-          // Passer l'objet complet au store
-          const response = await scanStore.scanTicket(parsedData);
-          scanResponse.value = response; // Met à jour la réponse du scan
-          console.log("Réponse du scan :", response);
-        } else {
-          throw new Error("QR Code invalide : DocumentId ou QR_CODE manquant.");
-        }
-      } catch (error) {
-        console.error("Erreur lors de la validation du scan :", error);
-        scanResponse.value = { status: "error", message: error.message };
-      }
+    if (parsedData.documentId && parsedData.qr_code) {
+      const response = await scanStore.scanTicket(parsedData);
+      scanResponse.value = response;
+      console.log("Réponse du scan :", response);
+
+      // Forcer la réinitialisation du scanner après un scan
+      setTimeout(() => {
+        scanResponse.value = null;  // Effacer la réponse du scan
+        result.value = "";  // Réinitialiser le dernier QR Code
+        componentKey.value += 1; // Forcer Vue à recréer le composant
+      }, 2000); // Petit délai pour laisser voir la réponse avant réinitialisation
+
+    } else {
+      throw new Error("QR Code invalide : DocumentId ou QR_CODE manquant.");
     }
+  } catch (error) {
+    console.error("Erreur lors de la validation du scan :", error);
+    scanResponse.value = { status: "error", message: error.message };
+  }
+}
 
     // Détection des QR codes
     function onDetect(detectedCodes) {
@@ -158,6 +163,8 @@ export default {
     }
 
     return {
+      componentKey,
+      resetScanner,
       result,
       scanResponse,
       selectedConstraints,

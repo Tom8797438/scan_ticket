@@ -16,10 +16,10 @@
   /* Conteneur principal */
   .section-scan {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 4rem;
-    padding: 1.5rem;
+    /* flex-direction: row;
+    justify-content: space-between; 
+    gap: 1rem;
+    padding: 1rem; */
     background: linear-gradient(135deg, #8565db, #8fd3ce);
     border-radius: 8px;
   }
@@ -30,7 +30,7 @@
     margin-bottom: 1rem;
     padding: 8px;
     display: block;
-    width: 100%;
+    max-width: 100%;
     border-radius: 8px;
   }
   
@@ -39,7 +39,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    gap: 4rem;
+    gap: 2rem;
     font-size: 1.2rem;
     margin-top: 1.2rem;
     font-weight: bold;
@@ -48,7 +48,7 @@
   /* Composant du scanner */
   .camera-frame {
     width: 100%;
-    max-width: 800px;
+    max-width: 900px;
     aspect-ratio: 16 / 9;
     border-radius: 8px;
     padding-bottom: 8px;
@@ -56,6 +56,62 @@
     margin: auto;
   }
   
+  .scan-response {
+    margin-top: 18px;
+    padding: 6px;
+    background-color: #b9252500;
+    display: block;
+    float: right;
+  }
+  .scan-response p {
+    margin: 5px 0;
+  }
+  
+  .scan-result {
+    text-align: center;
+    margin-top: 6px;
+  }
+
+  /* Taille de l'icône au retour de scan*/
+  .status-icon {
+    font-size: 60px; 
+    position: relative;
+    display: flex;
+    left: 90px;
+    gap: 38px;
+    top: 6px;
+    margin: 0px auto;
+  }
+  
+  .success-icon {
+    color: green;
+  }
+  
+  .warning-icon {
+    color: rgb(255, 0, 0);
+    rotate: 180deg ;
+  }
+  
+  .error-icon {
+    color: red;
+  }
+  
+  .reset-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 6px;
+    transition: background 0.3s;
+  }
+  
+  .reset-button:hover {
+    background-color: #0056b3;
+  }
+
   /* Responsive design */
   @media (max-width: 768px) {
     /* Colonne verticale pour les petits écrans */
@@ -65,6 +121,16 @@
       max-width: 400px;
     }
   
+    .status-icon {
+      font-size: 60px; 
+      position: relative;
+      display: flex;
+      left: 0px;
+      gap: 38px;
+      top: 6px;
+      margin: 0px auto;
+    }
+
     .selection-camera,
     .barcode-format-checkbox {
       font-size: 1.2rem;
@@ -111,35 +177,5 @@
     }
   }
 
-  .scan-response {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #b9252500;
-  }
-  .scan-response p {
-    margin: 5px 0;
-  }
   
-  .scan-result {
-    text-align: center;
-    margin-top: 20px;
-  }
-
-  /* Taille de l'icône au retour de scan*/
-  .status-icon {
-    font-size: 100px; 
-    margin: 0px auto;
-  }
-  
-  .success-icon {
-    color: green;
-  }
-  
-  .warning-icon {
-    color: orange;
-  }
-  
-  .error-icon {
-    color: red;
-  }
   
